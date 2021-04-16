@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="avgroup" transform="translate(-1)">
+    <path id="Path_12" data-name="Path 12" d="M17.316,3H4.684A1.689,1.689,0,0,0,3,4.684V16.474a1.689,1.689,0,0,0,1.684,1.684H17.316A1.689,1.689,0,0,0,19,16.474V4.684A1.689,1.689,0,0,0,17.316,3Zm0,1.684V7.211H4.684V4.684ZM13.105,16.474H8.895V8.895h4.211ZM4.684,8.895H7.211v7.579H4.684Zm10.105,7.579V8.895h2.526v7.579Z" transform="translate(0 -1)" fill="#f04b23"/>
+    <rect id="Rectangle_1" data-name="Rectangle 1" width="20" height="20" transform="translate(1)" fill="none"/>
+  </g>
+</svg>

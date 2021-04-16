@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="layout-masonry-line" transform="translate(3 4)">
+    <g id="Group_3" data-name="Group 3" transform="translate(-2 -3)">
+      <path id="Path_16" data-name="Path 16" d="M0,0H18.063V18.063H0Z" fill="none"/>
+      <path id="Path_17" data-name="Path 17" d="M17.745,16.383a.787.787,0,0,1-.787.787H2.787A.787.787,0,0,1,2,16.383V3.787A.787.787,0,0,1,2.787,3h14.17a.787.787,0,0,1,.787.787Zm-8.66-3.936H3.574V15.6H9.085ZM16.17,9.3H10.66v6.3H16.17ZM9.085,4.574H3.574v6.3H9.085Zm7.085,0H10.66V7.723H16.17Z" transform="translate(-1 -1)" fill="#f04b23"/>
+    </g>
+    <rect id="Rectangle_3" data-name="Rectangle 3" width="20" height="20" transform="translate(-3 -4)" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,4 @@
+<svg id="play-circle-fill" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <path id="Path_1" data-name="Path 1" d="M0,0H24V24H0Z" fill="none"/>
+  <path id="Path_2" data-name="Path 2" d="M12.083,22.167A10.083,10.083,0,1,1,22.166,12.084,10.083,10.083,0,0,1,12.083,22.167Zm-1.389-13.7a.4.4,0,0,0-.631.335v6.559a.4.4,0,0,0,.631.335l4.919-3.281a.4.4,0,0,0,0-.671l-4.92-3.276Z" transform="translate(-0.083 -0.083)" fill="#282828"/>
+</svg>

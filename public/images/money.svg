@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="avgroup" transform="translate(-1)">
+    <rect id="Rectangle_1" data-name="Rectangle 1" width="20" height="20" transform="translate(1)" fill="none"/>
+    <g id="Group_1" data-name="Group 1" transform="translate(1)">
+      <path id="Path_17" data-name="Path 17" d="M0,0H20V20H0Z" fill="none"/>
+      <path id="Path_18" data-name="Path 18" d="M11,20a9,9,0,1,1,9-9A9,9,0,0,1,11,20Zm0-1.8A7.2,7.2,0,1,0,3.8,11,7.2,7.2,0,0,0,11,18.2ZM7.85,12.8H12.8a.45.45,0,0,0,0-.9H9.2a2.25,2.25,0,1,1,0-4.5h.9V5.6h1.8V7.4h2.25V9.2H9.2a.45.45,0,1,0,0,.9h3.6a2.25,2.25,0,0,1,0,4.5h-.9v1.8H10.1V14.6H7.85Z" transform="translate(-1 -1)" fill="#f04b23"/>
+    </g>
+  </g>
+</svg>
