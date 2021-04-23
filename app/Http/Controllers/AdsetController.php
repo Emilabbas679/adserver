@@ -72,16 +72,139 @@ class AdsetController extends Controller
             $item = $ad['data']['rows'][0];
 //            $campaign = $this->api->get_campaign(['campaign_id' => $ad['campaign_id']])->post()['data']['rows'][0];
             if ($request->isMethod('POST')){
+                $opt = [];
+                $opt['set_id'] = $id;
+                $opt['campaign_id'] = $item['campaign_id'];
+                $opt['campaign_name'] = $item['campaign_name'];
+                $opt['name'] = $item['name'];
+                if ($request->has('os_id'))
+                    $opt['os_id'] = $request->get('os_id');
 
+                if ($request->has('device_id'))
+                    $opt['device_id'] = $request->get('device_id');
+
+                if ($request->has('connection_type_id'))
+                    $opt['connection_type_id'] = $request->get('connection_type_id');
+
+                if ($request->has('operator_id'))
+                    $opt['operator_id'] = $request->get('operator_id');
+
+                if ($request->has('age_group_id'))
+                    $opt['age_group_id'] = $request->get('age_group_id');
+
+                if ($request->has('gender'))
+                    $opt['gender'] = $request->get('gender');
+
+                if ($request->has('country_id'))
+                    $opt['country_id'] = $request->get('country_id');
+
+                if ($request->has('tags')) {
+                    $tags = (array) json_decode($request->tags);
+                    $tags = array_column($tags, 'value');
+                    $opt['tags'] = implode(',', $tags);
+                }
+                if ($request->has('negative_tags')){
+                    $tags = (array) json_decode($request->negative_tags);
+                    $tags = array_column($tags, 'value');
+                    $opt['negative_tags'] = implode(',', $tags);
+                }
+
+                $end_date = $request->get('end_date').' '.$request->end_date_time;
+                $opt['end_time'] = strtotime($end_date);
+                $start_date = $request->get('start_date').' '.$request->start_date_time;
+                $opt['start_time'] = strtotime($start_date);
+
+                $opt['budget_type'] =  $request->get('budget_type');
+                $opt['budget_planned'] =  $request->get('budget_planned');
+                $result = $this->api->update_adset($opt)->post();
+
+                if (isset($result['status']) and $result['status'] == 'success')
+                    return redirect()->route('adset.index', app()->getLocale())->with('success', __('adnetwork.successfully_updated'));
+                else
+                    return redirect()->back()->with('error', __('adnetwork.something_went_wrong'));
             }
-
             return view('adset.edit', compact('request', 'item' ));
         }
         return redirect()->route('adset.index', app()->getLocale())->with('adnetwork.not_found');
 
+    }
 
 
+    public function create(Request $request, $lang)
+    {
+        if ($request->isMethod('post')){
+            $request->validate([
+                'name' => ['required', 'string'],
+                'budget_type' => ['required', 'string'],
+                'budget_planned' => ['required', 'string'],
+                'start_date' => ['required', 'string'],
+                'start_date_time' => ['required', 'string'],
+                'end_date' => ['required', 'string'],
+                'end_date_time' => ['required', 'string'],
+            ],
+                [
+                    'name.required' => __('notification.name_is_required'),
+                    'user_id.required' => __('notification.user_is_required'),
+                ]
+            );
+            $opt = [];
+            $opt['campaign_id'] = $request->campaign_id;
+            $opt['name'] = $request->name;
+            $opt['user_id'] = auth()->id();
+            if ($request->has('os_id'))
+                $opt['os_id'] = $request->get('os_id');
 
+            if ($request->has('device_id'))
+                $opt['device_id'] = $request->get('device_id');
+
+            if ($request->has('connection_type_id'))
+                $opt['connection_type_id'] = $request->get('connection_type_id');
+
+            if ($request->has('operator_id'))
+                $opt['operator_id'] = $request->get('operator_id');
+
+            if ($request->has('age_group_id'))
+                $opt['age_group_id'] = $request->get('age_group_id');
+
+            if ($request->has('gender'))
+                $opt['gender'] = $request->get('gender');
+
+            if ($request->has('country_id'))
+                $opt['country_id'] = $request->get('country_id');
+
+            if ($request->has('tags')) {
+                $tags = (array) json_decode($request->tags);
+                $tags = array_column($tags, 'value');
+                $opt['tags'] = implode(',', $tags);
+            }
+            if ($request->has('negative_tags')){
+                $tags = (array) json_decode($request->negative_tags);
+                $tags = array_column($tags, 'value');
+                $opt['negative_tags'] = implode(',', $tags);
+            }
+
+            $end_date = $request->get('end_date').' '.$request->end_date_time;
+            $opt['end_time'] = strtotime($end_date);
+            $start_date = $request->get('start_date').' '.$request->start_date_time;
+            $opt['start_time'] = strtotime($start_date);
+
+            $opt['budget_type'] =  $request->get('budget_type');
+            $opt['budget_planned'] =  $request->get('budget_planned');
+            $result = $this->api->create_adset($opt)->post();
+            if (isset($result['status']) and $result['status'] == 'success')
+                return redirect()->route('adset.index', app()->getLocale())->with('success', __('adnetwork.successfully_created'));
+            else
+                return redirect()->back()->withInput()->with('error', __('adnetwork.something_went_wrong'));
+
+        }
+        $campaigns = $this->api->get_campaign(['user_id' => auth()->id()])->post();
+        if (isset($campaigns['status']) and $campaigns['status'] == 'success')
+            $campaigns = $campaigns['data']['rows'];
+        else
+            return redirect()->route('adset.index', app()->getLocale())->with('error', __('adnetwork.you_havenot_any_active_campaign'));
+
+
+        return view('adset.create', compact('campaigns'));
     }
 
 

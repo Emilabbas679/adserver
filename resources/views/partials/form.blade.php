@@ -6,10 +6,14 @@
 
     @elseif($data['type'] == 'input:text')
     <div class="form-group">
-        <label class="form-label" for="{{$data['id']}}">@if(isset($data['required']) and $data['required'])  required @endif {{$data['title']}}</label>
+        <label class="form-label" for="{{$data['id']}}"> {{$data['title']}}</label>
         <div class="form-input">
             <input id="{{$data['id']}}" value='{{$data['value']}}' name="{{$data['id']}}" type="text" placeholder="{{$data['title']}}">
         </div>
+        @error($data['id'])
+        <div class="notification-error">{{ $message }}</div>
+        @enderror
+
     </div>
     @elseif($data['type'] == 'input:password')
     <div class="form-group">
@@ -80,6 +84,9 @@
                         <option value="{{$option['id']}}" @if($option['selected'] == 1) selected @endif>{{$option['text']}}</option>
                     @endforeach
                 </select>
+                @error($data['name'])
+                <div class="notification-error">{{ $message }}</div>
+                @enderror
             </div>
         </div>
 

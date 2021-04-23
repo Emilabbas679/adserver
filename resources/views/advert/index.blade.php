@@ -113,18 +113,18 @@
                                                 <div class="tools"></div>
                                                 <div class="tools-list">
                                                     <ul>
-                                                        <li class="edit"><a class="dropdown-item" href="{{route('advert.edit', ['lang'=> app()->getLocale(), 'id' => $item['set_id']])}}">Düzəliş</a></li>
+                                                        <li class="edit"><a class="dropdown-item" href="{{route('advert.edit', ['lang'=> app()->getLocale(), 'id' => $item['ad_id']])}}">Düzəliş</a></li>
                                                         @if($item['status_id'] != 10)
-                                                            <li class="stop-a"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 10])}}">{{__('admin.admin_stop')}}</a></li>
+                                                            <li class="stop-a"><a class="dropdown-item" href="{{route('advert.status', ['lang' => app()->getLocale(), 'advert_id' => $item['set_id'], 'status_id' => 10])}}">{{__('admin.admin_stop')}}</a></li>
                                                         @endif
                                                         @if($item['status_id'] != 40)
-                                                            <li class="stop-b"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 40])}}">{{__('admin.pause')}}</a></li>
+                                                            <li class="stop-b"><a class="dropdown-item" href="{{route('advert.status', ['lang' => app()->getLocale(), 'advert_id' => $item['set_id'], 'status_id' => 40])}}">{{__('admin.pause')}}</a></li>
                                                         @endif
                                                         @if($item['status_id'] != 27)
-                                                            <li class="delete"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 27])}}">{{__('admin.delete')}}</a></li>
+                                                            <li class="delete"><a class="dropdown-item" href="{{route('advert.status', ['lang' => app()->getLocale(), 'advert_id' => $item['set_id'], 'status_id' => 27])}}">{{__('admin.delete')}}</a></li>
                                                         @endif
                                                         @if($item['status_id'] != 11)
-                                                            <li class="activate"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 11])}}">{{__('admin.activate')}}</a></li>
+                                                            <li class="activate"><a class="dropdown-item" href="{{route('advert.status', ['lang' => app()->getLocale(), 'advert_id' => $item['set_id'], 'status_id' => 11])}}">{{__('admin.activate')}}</a></li>
                                                         @endif
                                                     </ul>
                                                 </div>

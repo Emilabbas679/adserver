@@ -36,6 +36,7 @@ Route::get('/', function (){
 Route::middleware('auth')->group(function (){
     Route::prefix('/api/select')->group(function (){
         Route::get('/users', [Api::class, 'selectUsers'])->name('select.users');
+        Route::get('/sites', [Api::class, 'selectSites'])->name('select.sites');
         Route::get('/agencies', [Api::class, 'selectAgencies'])->name('select.agencies');
 
     });
@@ -55,11 +56,18 @@ Route::prefix('/{lang}')->middleware('language')->group(function() {
         Route::get('/campaign/statistic/{id}', [Campaign::class, 'statistics'])->name('campaign.statistics');
         Route::get('/campaign/status/{campaign_id}/{status_id}', [Campaign::class, 'statusUpdate'])->name('campaign.status');
         Route::get('/adset/status/{adset_id}/{status_id}', [Adset::class, 'statusUpdate'])->name('adset.status');
+        Route::get('/advert/status/{advert_id}/{status_id}', [Advert::class, 'statusUpdate'])->name('advert.status');
         Route::match(['get','post'],'/campaign/edit/{id}', [Campaign::class, 'edit'])->name('campaign.edit');
+        Route::match(['get','post'],'/campaign/create', [Campaign::class, 'create'])->name('campaign.create');
+        Route::match(['get','post'],'/adset/create', [Adset::class, 'create'])->name('adset.create');
         Route::match(['get','post'],'/adset/edit/{id}', [Adset::class, 'edit'])->name('adset.edit');
         Route::match(['get','post'],'/advert/edit/{id}', [Advert::class, 'edit'])->name('advert.edit');
+        Route::match(['get','post'],'/advert/create', [Advert::class, 'create'])->name('advert.create');
+
         Route::get('/adset', [Adset::class, 'index'])->name('adset.index');
         Route::get('/advert/statistic/{id}/{type}', [Advert::class, 'statistic'])->name('advert.statistic');
+        Route::post('/advert/files/upload', [Advert::class, 'fileUpload'])->name('advert.upload');
+        Route::delete('/advert/files/delete', [Advert::class, 'fileDelete'])->name('advert.delete');
         Route::get('/advert', [Advert::class, 'index'])->name('advert.index');
         Route::get('/logout', [Profile::class, 'logout'])->name('logout');
         Route::match(['get','post'],'/profile/settings', [Profile::class, 'settings'])->name('profile_settings');

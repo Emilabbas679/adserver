@@ -1,3 +1,7 @@
+<?php
+
+ ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,6 +12,7 @@
     <link media="screen" href="/css/datatables.min.css" type="text/css" rel="stylesheet" />
     <link media="screen" href="/css/responsive.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript" src="/js/jquery.js"></script>
+    @yield('css')
 </head>
 <body>
 <div class="x-admin">

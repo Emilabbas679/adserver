@@ -122,4 +122,32 @@ class CampaignController extends Controller
         $campaign = $campaign['data']['rows'][0];
         return view('campaign.statistics', compact('request', 'items', 'campaign'));
     }
+
+
+    public function create(Request $request, $lang)
+    {
+        if ($request->isMethod('post')){
+            $request->validate([
+                'name' => ['required', 'string'],
+                'user_id' => ['required', 'string'],
+            ],
+                [
+                    'name.required' => __('notification.name_is_required'),
+                    'user_id.required' => __('notification.user_is_required'),
+                ]
+            );
+            $opt = ['name' => $request->name, 'user_id' => $request->user_id, 'agency_id' => $request->agency_id];
+            $result = $this->api->create_campaign($opt)->post();
+            if (isset($result['status']) and $result['status'] == 'success')
+                return redirect()->route('campaign.index', app()->getLocale())->with('success', __('adnetwork.successfully_created'));
+            return redirect()->back()->with('error', __('adnetwork.something_went_wrong'));
+        }
+
+        $form = [];
+        $form[] = ['type' => 'input:text', 'required' => 1, 'id'=>'name','name'=>'name', 'title' => __('adnetwork.campaign_title'), 'value'=>old('name')];
+        $form[] = ['type' => 'select2', 'id'=>'users', 'name'=>'user_id', 'title'=> __('adnetwork.user'), 'placeholder' => __('adnetwork.user'), 'options' =>[]];
+        $form[] = ['type' => 'select2', 'id'=>'agencies', 'name'=>'agency_id', 'title'=> __('adnetwork.agency'), 'placeholder' => __('adnetwork.agency'), 'options' =>[['id'=>0, 'text' => __('adnetwork.not_agency'),'selected' => 1 ]]];
+
+        return view('campaign.create', compact('form'));
+    }
 }

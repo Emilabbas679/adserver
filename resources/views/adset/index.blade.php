@@ -11,26 +11,26 @@
         @include('partials.cards')
         @include('flash-message')
         <div class="a-block mb-20">
-            <div class="a-block-head">{{__('admin.search_in_adset')}}</div>
+            <div class="a-block-head">{{__('adnetwork.search_in_adset')}}</div>
             <div class="a-block-body">
                 <form action="{{route('adset.index', app()->getLocale())}}" method="get">
                     <div class="form-group mb-0">
 						<div class="cols col-table">
 							<div class="tb-item col-item col-b">
 								<div class="form-input">
-									<input id="text" type="text" name="searchQuery" @if($request->has('searchQuery')) value="{{$request->searchQuery}}" @endif placeholder="{{__('placeholders.group')}}">
+									<input id="text" type="text" name="searchQuery" @if($request->has('searchQuery')) value="{{$request->searchQuery}}" @endif placeholder="{{__('adnetwork.group')}}">
 								</div>
 							</div>
 							<div class="tb-item col-item col-b">
 								<div class="form-select">
-									<select name="status_id" id="country" class="select-ns" data-placeholder="{{__('placeholders.all_statuses')}}">
-										<option value="">{{__('tables.all_statuses')}}</option>
-										<option value="11" {{selected_exist($request, 'status_id', 11)}}>{{__('tables.active')}}</option>
-										<option value="12" {{selected_exist($request, 'status_id', 12)}}>{{__('tables.pending')}}</option>
-										<option value="17" {{selected_exist($request, 'status_id', 17)}}>{{__('tables.user_stopped')}}</option>
-										<option value="10" {{selected_exist($request, 'status_id', 10)}}>{{__('tables.admin_stopped')}}</option>
-										<option value="27" {{selected_exist($request, 'status_id', 27)}}>{{__('tables.deleted')}}</option>
-										<option value="40" {{selected_exist($request, 'status_id', 40)}}>{{__('tables.pause')}}</option>
+									<select name="status_id" id="country" class="select-ns" data-placeholder="{{__('adnetwork.all_statuses')}}">
+										<option value="">{{__('adnetwork.all_statuses')}}</option>
+										<option value="11" {{selected_exist($request, 'status_id', 11)}}>{{__('adnetwork.active')}}</option>
+										<option value="12" {{selected_exist($request, 'status_id', 12)}}>{{__('adnetwork.pending')}}</option>
+										<option value="17" {{selected_exist($request, 'status_id', 17)}}>{{__('adnetwork.user_stopped')}}</option>
+										<option value="10" {{selected_exist($request, 'status_id', 10)}}>{{__('adnetwork.admin_stopped')}}</option>
+										<option value="27" {{selected_exist($request, 'status_id', 27)}}>{{__('adnetwork.deleted')}}</option>
+										<option value="40" {{selected_exist($request, 'status_id', 40)}}>{{__('adnetwork.pause')}}</option>
 									</select>
 								</div>
 							</div>
@@ -42,10 +42,10 @@
 										@endif
 									</select>
 
-									{{--                                        <input id="text" type="text" placeholder="{{__('placeholders.username')}}">--}}
+									{{--                                        <input id="text" type="text" placeholder="{{__('adnetwork.username')}}">--}}
 								</div>
 							</div>
-							<div class="tb-item col-item"><button type="submit" class="a-button b-orange">{{__('admin.search')}}</button></div>
+							<div class="tb-item col-item"><button type="submit" class="a-button b-orange">{{__('adnetwork.search')}}</button></div>
 						</div>
                     </div>
                 </form>
@@ -53,7 +53,10 @@
         </div>
 
         <div class="a-block">
-            <div class="a-block-head">{{__('admin.adsets')}}</div>
+            <div class="a-block-head">{{__('adnetwork.adsets')}}
+                <a href="{{route('adset.create', app()->getLocale())}}" class="a-button b-orange" style="float: right">{{__('adnetwork.create')}}</a>
+
+            </div>
             <div class="a-block-body">
                 @if(count($items)>0)
                     <div class="table-responsive">
@@ -61,19 +64,19 @@
                             <thead>
 
                             <tr>
-                                <th>{{__('tables.id')}}</th>
-                                <th>{{__('tables.tools')}}</th>
-                                <th>{{__('tables.username')}}</th>
-                                <th>{{__('tables.set_id_adset')}}</th>
-                                <th>{{__('tables.ads_count')}}</th>
-                                <th>{{__('tables.statistics')}}</th>
-                                <th>{{__('tables.budget_type')}}</th>
-                                <th>{{__('tables.planned_budget')}}</th>
-                                <th>{{__('tables.cost_budget')}}</th>
-                                <th>{{__('tables.status')}}</th>
-                                <th>{{__('tables.start_date')}}</th>
-                                <th>{{__('tables.end_date')}}</th>
-                                <th>{{__('tables.date')}}</th>
+                                <th>{{__('adnetwork.id')}}</th>
+                                <th>{{__('adnetwork.tools')}}</th>
+                                <th>{{__('adnetwork.username')}}</th>
+                                <th>{{__('adnetwork.set_id_adset')}}</th>
+                                <th>{{__('adnetwork.ads_count')}}</th>
+                                <th>{{__('adnetwork.statistics')}}</th>
+                                <th>{{__('adnetwork.budget_type')}}</th>
+                                <th>{{__('adnetwork.planned_budget')}}</th>
+                                <th>{{__('adnetwork.budget_cost')}}</th>
+                                <th>{{__('adnetwork.status')}}</th>
+                                <th>{{__('adnetwork.start_date')}}</th>
+                                <th>{{__('adnetwork.end_date')}}</th>
+                                <th>{{__('adnetwork.date')}}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -86,16 +89,16 @@
                                             <ul>
                                                 <li class="edit"><a class="dropdown-item" href="{{route('adset.edit', ['lang'=> app()->getLocale(), 'id' => $item['set_id']])}}">Düzəliş</a></li>
                                                 @if($item['status_id'] != 10)
-                                                    <li class="stop-a"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 10])}}">{{__('admin.admin_stop')}}</a></li>
+                                                    <li class="stop-a"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 10])}}">{{__('adnetwork.admin_stop')}}</a></li>
                                                 @endif
                                                 @if($item['status_id'] != 40)
-                                                    <li class="stop-b"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 40])}}">{{__('admin.pause')}}</a></li>
+                                                    <li class="stop-b"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 40])}}">{{__('adnetwork.pause')}}</a></li>
                                                 @endif
                                                 @if($item['status_id'] != 27)
-                                                    <li class="delete"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 27])}}">{{__('admin.delete')}}</a></li>
+                                                    <li class="delete"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 27])}}">{{__('adnetwork.delete')}}</a></li>
                                                 @endif
                                                 @if($item['status_id'] != 11)
-                                                    <li class="activate"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 11])}}">{{__('admin.activate')}}</a></li>
+                                                    <li class="activate"><a class="dropdown-item" href="{{route('adset.status', ['lang' => app()->getLocale(), 'adset_id' => $item['set_id'], 'status_id' => 11])}}">{{__('adnetwork.activate')}}</a></li>
                                                 @endif
                                             </ul>
                                         </div>
@@ -104,17 +107,19 @@
                                     <td>{{$item['campaign_name']}}</td>
                                     <td>{{$item['count_ad']}}</td>
                                     <td class="t-center"><a href="{{route('advert.statistic', ['lang'=>app()->getLocale(),'id'=>$item['set_id'], 'type'=> 'adset'])}}" class="a-button with-icon fw-normal statistics">Statistika</a></td>
-                                    <td>{{$item['budget_type']}}</td>
+                                    <td>
+                                        @if($item['budget_type'] == 1)  {{__('adnetwork.total')}} @else {{__('adnetwork.daily')}} @endif
+                                    </td>
                                     <td>@if($item['budget_planned']) {{number_format($item['budget_planned'],2)}} @else 0 @endif</td>
                                     <td>@if($item['budget_spent']) {{number_format($item['budget_spent'],2)}} @else 0 @endif</td>
                                     <td class="t-center">
-                                    <span data-id="{{$item['campaign_status_id']}}" class="badge @if($item['campaign_status_id'] == 11) badge-success @elseif($item['campaign_status_id'] == 12) badge-info @elseif($item['campaign_status_id'] == 17) badge-warning @elseif($item['campaign_status_id'] == 10) badge-danger @elseif($item['campaign_status_id'] == 27) badge-danger @elseif($item['campaign_status_id'] == 40) badge-warning @endif ">
-                                        @if($item['campaign_status_id'] == 11) {{__('tables.active')}}
-                                        @elseif($item['campaign_status_id'] == 12)  {{__('tables.pending')}}
-                                        @elseif($item['campaign_status_id'] == 17) {{__('tables.user_stopped')}}
-                                        @elseif($item['campaign_status_id'] == 10)  {{__('tables.admin_stopped')}}
-                                        @elseif($item['campaign_status_id'] == 27) {{__('tables.deleted')}}
-                                        @elseif($item['campaign_status_id'] == 40) {{__('tables.pause')}}
+                                    <span data-id="{{$item['status_id']}}" class="badge @if($item['status_id'] == 11) badge-success @elseif($item['status_id'] == 12) badge-info @elseif($item['status_id'] == 17) badge-warning @elseif($item['status_id'] == 10) badge-danger @elseif($item['status_id'] == 27) badge-danger @elseif($item['status_id'] == 40) badge-warning @endif ">
+                                        @if($item['status_id'] == 11) {{__('adnetwork.active')}}
+                                        @elseif($item['status_id'] == 12)  {{__('adnetwork.pending')}}
+                                        @elseif($item['status_id'] == 17) {{__('adnetwork.user_stopped')}}
+                                        @elseif($item['status_id'] == 10)  {{__('adnetwork.admin_stopped')}}
+                                        @elseif($item['status_id'] == 27) {{__('adnetwork.deleted')}}
+                                        @elseif($item['status_id'] == 40) {{__('adnetwork.pause')}}
                                         @endif
                                     </span>
                                     </td>
@@ -128,7 +133,7 @@
                     </div>
                 @else
                     <div class="alert alert-warning alert-styled-right alert-dismissible">
-                        {{__('admin.empty_result')}}
+                        {{__('adnetwork.empty_result')}}
                     </div>
                 @endif
                 <div class="pagination mt-20">
@@ -160,10 +165,10 @@
     </script>
     <script>
         $('#users').select2({
-            placeholder: "{{__('placeholders.username')}}",
+            placeholder: "{{__('adnetwork.username')}}",
             language: {
                 searching: function() {
-                    return "{{__('placeholders.searching')}}";
+                    return "{{__('adnetwork.searching')}}";
                 }
             },
 

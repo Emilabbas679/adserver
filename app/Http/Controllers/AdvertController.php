@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Helpers\PaginationLinks;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use File;
 
 class AdvertController extends Controller
 {
@@ -125,9 +127,301 @@ class AdvertController extends Controller
     }
 
 
-    public function edit(Request $request, $lang, $id)
+
+    public function create(Request $request, $lang)
     {
-        dd($lang);
+        if ($request->isMethod('post')){
+            $request->validate([
+                'name' => ['required', 'string'],
+                'target_url' => ['required', 'string'],
+
+            ],
+                [
+                    'name.required' => __('notification.ads_name_is_required'),
+                    'target_url.required' => __('notification.target_url_is_required'),
+                ]
+            );
+            $sites = [];
+            $excluded = [];
+            if (isset($request->sites))
+                $sites = $request->sites;
+            if (isset($request->forbidden_sites))
+                $excluded = $request->forbidden_sites;
+            $opt = [
+                'set_id' => $request->set_id,
+                'user_id' => auth()->id(),
+                'campaign_id' => $request->campaign_id,
+                'name' => $request->name,
+                "ad_url" => $request->target_url,
+                "format_type_id" => $request->get('format'),
+                "dimension_id" => $request->dimension_id,
+                'text' => $request->text,
+                'display_name' => $request->display_name,
+                'model_id' => $request->model_id,
+                'budget_level' => $request->budget_level,
+                'budget_type' => $request->budget_type,
+                'budget_planned' => $request->budget_planned,
+                'unit_cost_min' => $request->unit_cost_min,
+                'unit_cost_max' => $request->unit_cost_max,
+                "status_description" => "approve_ad",
+                "no_earning" => $request->no_earning,
+                'no_spent' => $request->no_spent,
+                'ref_user_id' => $request->ref_user_id,
+                "ref_share_rate" => $request->ref_share_rate,
+                "frequency" => $request->frequency,
+                "accelerated" => $request->accelerated,
+                'targeting'=>[
+                    "frequency_capping" => 0,
+                    "frequency_period" => 'day',
+                    "site" => json_encode($sites),
+                    "excluded_site" => json_encode($excluded),
+                ],
+            ];
+
+            if ($request->has('frequency'))
+                $opt['targeting']['frequency'] = 1;
+
+            $result = $this->api->create_ad($opt)->post();
+            if (isset($result['status']) and $result['status'] == 'success') {
+                if (isset($result['status']) and $result['status'] == 'success') {
+                    $ad_id = $result['data']['ad_id'];
+                    $opt['ad_id'] = $ad_id;
+                    if ($request->has('file')) {
+                        $file = trim( $request->file, '"');
+                        $file = stripslashes($file);
+                        $file = public_path($file);
+                        if (is_file($file)) {
+                            $mime = mime_content_type($file);
+                            $ext = array_reverse(explode('.', $file))[0];
+                            $time = time();
+                            $new_file =  public_path('uploads/adverts/'.$time.'-'.str_replace(' ', '-', $request->name).'.'.$ext);
+                            $filename = env('APP_URL')."/public/uploads/adverts/$time".'-'.strtolower(str_replace(' ', '-', $request->name)).'.'.$ext;
+                            $filesize = filesize($file);
+                            File::move($file, $new_file);
+                            $opt['file_data'] = json_encode(
+                                [
+                                    'html' => null,
+                                    'dir_url' => $filename,
+                                    'down_url' => $filename,
+                                    'id' => $ad_id,
+                                    'ad_id' =>$ad_id,
+                                    'size' => $filesize,
+                                    'format' => $mime,
+                                    'type' => $mime,
+                                    'dimension_id' => 30,
+                                ]
+                            );
+                        }
+                        $r = $this->api->update_ad($opt)->post();
+                    }
+                }
+                return redirect()->route('advert.index', app()->getLocale())->with('success', __('adnetwork.successfully_updated'));
+            }
+            $messages = $result['messages'];
+            return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
+        }
+
+        $campaigns = $this->api->get_campaign(['user_id' => auth()->id()])->post();
+        if (isset($campaigns['status']) and $campaigns['status'] == 'success')
+            $campaigns = $campaigns['data']['rows'];
+        else
+            return redirect()->route('adset.index', app()->getLocale())->with('error', __('adnetwork.you_havenot_any_active_campaign'));
+        $groups = $this->api->get_adset(['user_id' => auth()->id()])->post();
+        if (isset($groups['status']) and $groups['status'] == 'success')
+            $groups = $groups['data']['rows'];
+        else
+            return redirect()->route('advert.index', app()->getLocale())->with('error', __('adnetwork.you_havenot_any_active_group'));
+
+
+        $sites = Cache::remember('sites', now()->addMinutes(10), function () {
+            $result = $this->api->get_site(['status_id' => 11, 'limit' => 1000])->post();
+            return $result['data']['rows'];
+        });
+        return view('advert.create', compact('sites', 'campaigns', 'groups'));
     }
 
+
+    public function edit(Request $request, $lang, $id)
+    {
+        $advert = $this->api->get_one_ad(['ad_id' => $id])->post();
+        if ($advert['status'] != 'success')
+            return redirect()->route('advert.index', app()->getLocale())->with('error', __('adnetwork.ads_not_found'));
+        $item = $advert['data'];
+
+
+        if ($request->isMethod('post')){
+            $request->validate([
+                'name' => ['required', 'string'],
+                'target_url' => ['required', 'string'],
+            ],
+                [
+                    'name.required' => __('notification.ads_name_is_required'),
+                    'target_url.required' => __('notification.target_url_is_required'),
+                ]
+            );
+            $sites = [];
+            $excluded = [];
+            if (isset($request->sites))
+                $sites = $request->sites;
+            if (isset($request->forbidden_sites))
+                $excluded = $request->forbidden_sites;
+            $opt = [
+                "ad_id" => $id,
+                'set_id' => $item['set_id'],
+                'user_id' => auth()->id(),
+                'campaign_id' => $item['campaign_id'],
+                'name' => $request->name,
+                "ad_url" => $request->target_url,
+                "format_type_id" => $request->get('format'),
+                "dimension_id" => $request->dimension_id,
+                'text' => $request->text,
+                'display_name' => $request->display_name,
+                'model_id' => $request->model_id,
+                'budget_level' => $request->budget_level,
+                'budget_type' => $request->budget_type,
+                'budget_planned' => $request->budget_planned,
+                'unit_cost_min' => $request->unit_cost_min,
+                'unit_cost_max' => $request->unit_cost_max,
+                "status_description" => "approve_ad",
+                "no_earning" => $request->no_earning,
+                'no_spent' => $request->no_spent,
+                'ref_user_id' => $request->ref_user_id,
+                "ref_share_rate" => $request->ref_share_rate,
+                "frequency" => $request->frequency,
+                "accelerated" => $request->accelerated,
+                'targeting'=>[
+                    "frequency_capping" => 0,
+                    "frequency_period" => 'day',
+                    "site" => json_encode($sites),
+                    "excluded_site" => json_encode($excluded),
+                ],
+            ];
+
+            if ($request->has('frequency'))
+                $opt['targeting']['frequency'] = 1;
+
+            if ($request->ads_file == null){
+                $item_file = json_decode($item['file_data']);
+                if (gettype($item_file) != 'integer') {
+                    if (str_contains($item_file->dir_url,env('APP_URL'))) {
+                        $file = str_replace(env('APP_URL').'/public','', $item_file->dir_url);
+                        $file = public_path($file);
+                        if(is_file($file)) {
+                           unlink($file);
+                        }
+                    }
+                    $opt['file_data'] = json_encode([
+                        'html' => null,
+                        'dir_url' => "",
+                        'down_url' => "",
+                        'id' => $id,
+                        'ad_id' =>$id,
+                        'size' => 0,
+                        'format' => "",
+                        'type' => "",
+                    ]);
+                }
+            }
+            else{
+                $item_file = json_decode($item['file_data']);
+                if (gettype($item_file) != 'integer') {
+                    if (str_contains($item_file->dir_url,env('APP_URL'))) {
+                        $file = str_replace(env('APP_URL').'/public','', $item_file->dir_url);
+                        $file = public_path($file);
+                        if(is_file($file)) {
+                           unlink($file);
+                        }
+                    }
+                }
+                if ($item_file->dir_url != $request->ads_file) {
+                    $file = trim( $request->ads_file, '"');
+                    $file = stripslashes($file);
+                    $file = public_path($file);
+                    if (is_file($file)) {
+                        $mime = mime_content_type($file);
+                        $ext = array_reverse(explode('.', $file))[0];
+                        $time = time();
+                        $new_file =  public_path('uploads/adverts/'.$time.'-'.str_replace(' ', '-', $request->name).'.'.$ext);
+                        $filename = env('APP_URL')."/public/uploads/adverts/$time".'-'.strtolower(str_replace(' ', '-', $request->name)).'.'.$ext;
+                        $filesize = filesize($file);
+                        File::move($file, $new_file);
+                        $opt['file_data'] = json_encode(
+                            [
+                                'html' => null,
+                                'dir_url' => $filename,
+                                'down_url' => $filename,
+                                'id' => $id,
+                                'ad_id' =>$id,
+                                'size' => $filesize,
+                                'format' => $mime,
+                                'type' => $mime,
+                                'dimension_id' => 30,
+                            ]
+                        );
+                    }
+                }
+                $opt['file_data'] = json_encode([
+                    'html' => null,
+                    'dir_url' => $filename,
+                    'down_url' => $filename,
+                    'id' => $id,
+                    'ad_id' =>$id,
+                    'size' => $filesize,
+                    'format' => $mime,
+                    'type' => $mime,
+                    'dimension_id' => 30,
+                ]);
+            }
+            $result = $this->api->update_ad($opt)->post();
+            if (isset($result['status']) and $result['status'] == 'success')
+                return redirect()->route('advert.index', app()->getLocale())->with('success', __('adnetwork.successfully_updated'));
+            $messages = $result['messages'];
+            return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
+        }
+
+
+
+        $s_sites = [];
+        $excludeds = [];
+        if ($item['targeting']['site'] != null and count((array) json_decode(stripslashes($item['targeting']['site']))) != 0)
+            $s_sites = $this->api->get_site(['site_ids' => (array) json_decode($item['targeting']['site'])])->post()['data']['rows'];
+
+        if ($item['targeting']['excluded_site'] != null and count((array) json_decode(stripslashes($item['targeting']['excluded_site']))) != 0)
+            $excludeds = $this->api->get_site(['site_ids' => (array) json_decode($item['targeting']['excluded_site'])])->post()['data']['rows'];
+
+        $campaigns = $this->api->get_campaign(['user_id' => auth()->id()])->post();
+        if (isset($campaigns['status']) and $campaigns['status'] == 'success')
+            $campaigns = $campaigns['data']['rows'];
+        else
+            return redirect()->route('adset.index', app()->getLocale())->with('error', __('adnetwork.you_havenot_any_active_campaign'));
+        $groups = $this->api->get_adset(['user_id' => auth()->id()])->post();
+        if (isset($groups['status']) and $groups['status'] == 'success')
+            $groups = $groups['data']['rows'];
+        else
+            return redirect()->route('advert.index', app()->getLocale())->with('error', __('adnetwork.you_havenot_any_active_group'));
+        $sites = Cache::remember('sites', now()->addMinutes(10), function () {
+            $result = $this->api->get_site(['status_id' => 11, 'limit' => 1000])->post();
+            return $result['data']['rows'];
+        });
+        return view('advert.edit', compact('item', 'campaigns','groups', 'sites', 's_sites', 'excludeds'));
+    }
+
+
+    public function fileUpload(Request $request, $lang)
+    {
+        if($request->hasFile('file')) {
+            $fileName = time().'_'.str_replace(' ', '-', $request->file->getClientOriginalName());
+            $request->file->move(public_path('/uploads/tmp'), $fileName);
+            $data = "/uploads/tmp/$fileName";
+        }
+        else
+            $data = "";
+        return json_encode($data);
+    }
+
+    public function fileDelete(Request $request, $lang)
+    {
+        return true;
+//        return $request->getContent();
+    }
 }

@@ -30,14 +30,11 @@ class ApiController extends Controller
             $items = [];
             if ($page == 1)
                 $items[] = ['id' => 0, 'text'=>__('notification.not_user')];
-
             for ($i=0;$i<10;$i++){
                 if (isset($ids[$i]))
                     $items[] = ['id'=>$ids[$i], 'text'=>$emails[$i]];
             }
-
             $data = ['results' => $items, 'pagination' => ['more' => $more]];
-
             return $data;
         }
         return false;
@@ -68,6 +65,36 @@ class ApiController extends Controller
             }
             $data = ['results' => $items, 'pagination' => ['more' => $more]];
 
+            return $data;
+        }
+        return false;
+    }
+
+
+
+    public function selectSites(Request $request)
+    {
+        $page = $request->page;
+        $opt = ['page' => $page, 'limit'=>10];
+        if($request->has('search'))
+            $opt['searchQuery'] = $request->search;
+        $data = $this->api->get_site($opt)->post();
+        if (isset($data['status']) and $data['status'] == 'success'){
+            $count = $data['data']['count'];
+            $rows = $data['data']['rows'];
+            $more = false;
+            if ($count > $page*10)
+                $more = true;
+            $domains = array_column($rows,'domain');
+            $ids = array_column($rows,'site_id');
+            $items = [];
+            if ($page == 1)
+                $items[] = ['id' => 0, 'text'=>__('notification.not_user')];
+            for ($i=0;$i<10;$i++){
+                if (isset($ids[$i]))
+                    $items[] = ['id'=>$ids[$i], 'text'=>$domains[$i]];
+            }
+            $data = ['results' => $items, 'pagination' => ['more' => $more]];
             return $data;
         }
         return false;

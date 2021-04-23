@@ -55,7 +55,11 @@
             </div>
         </div>
         <div class="a-block">
-            <div class="a-block-head">{{__('admin.campaigns')}}</div>
+            <div class="a-block-head">{{__('admin.campaigns')}}
+
+                <a href="{{route('campaign.create', app()->getLocale())}}" class="a-button b-orange" style="float: right">{{__('adnetwork.create')}}</a>
+            </div>
+
             <div class="a-block-body">
                 @if(count($items)>0)
                     <div class="table-responsive">

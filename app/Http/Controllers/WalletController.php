@@ -15,11 +15,11 @@ class WalletController extends Controller
 
     public function increase(Request $request, $lang)
     {
-
+        $item = auth()->user();
         if ($request->isMethod('post')){
 
         }
-        return view('auth.profile.wallet.increase');
+        return view('auth.profile.wallet.increase', compact('item'));
     }
 
 
