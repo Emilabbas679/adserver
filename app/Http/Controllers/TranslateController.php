@@ -121,7 +121,7 @@ class TranslateController extends Controller
         foreach ($files as $file => $value) {
             $ftemplate = "<?php \n return [\n ";
             if (!file_exists($file))
-                file_put_contents(base_path($file), $ftemplate);
+                file_put_contents($file, $ftemplate);
             else{
                 $lang_file = fopen($file, 'w');
                 fwrite($lang_file, $ftemplate);
@@ -136,6 +136,6 @@ class TranslateController extends Controller
             file_put_contents($file, $current);
         }
 
-        return redirect()->route('admin.translations', app()->getLocale())->with('success', __('notification.successfully_login'));
+        return redirect()->route('admin.translations', app()->getLocale())->with('success', __('adnetwork.successfully_updated'));
     }
 }

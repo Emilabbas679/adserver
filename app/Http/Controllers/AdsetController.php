@@ -129,8 +129,7 @@ class AdsetController extends Controller
 
     }
 
-
-    public function create(Request $request, $lang)
+    public function create(Request $request)
     {
         if ($request->isMethod('post')){
             $request->validate([

@@ -1,20 +1,17 @@
-<?php
-
-return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used during authentication for various
-    | messages that we need to display to the user. You are free to modify
-    | these language lines according to your application's requirements.
-    |
-    */
-
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
+<?php 
+ return [
+"publisher_welcome" => "Enter system, manage your ad campaigns. If you face any problems, feel free to contact us.",
+"user_request_new_pass" => "Request New Password",
+"hesabin_var" => "Already registered?",
+"register" => "Register",
+"smartbee_platform" => "SmartBee Reklam platforması",
+"reset_pass" => "Forgot password?",
+"remember_me" => "Remember me",
+"advertiser_welcome" => "Enter system, manage your ad campaigns. If you face any problems, feel free to contact us.",
+"return_home" => "Return to homepage",
+"login" => "Enter",
+"hesabn_yoxdur" => "Do not have account?",
+"publisher_title" => "Publisher",
+"advertiser_title" => "Advertiser",
+"welcome" => "Smart bees are greeting you!",
 ];

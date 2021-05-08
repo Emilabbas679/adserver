@@ -17,7 +17,7 @@
                 <div class="a-block">
                     <div class="a-block-head">Reklam elanları</div>
                     <div class="a-block-body">
-
+                        {!! $chart->container() !!}
                     </div>
                 </div>
             </div>
@@ -25,68 +25,27 @@
                 <div class="a-block">
                     <div class="a-block-head">Form elements</div>
                     <div class="a-block-body">
-                        <div class="form">
-                            <form>
-                                <div class="form-group">
-                                    <label class="form-label" for="testinput">E-mail</label>
-                                    <div class="form-input">
-                                        <input id="textinput" type="text" placeholder="E-mail daxil edin">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="testinput2">E-mail</label>
-                                    <div class="form-input">
-                                        <input id="textinput2" type="text" placeholder="E-mail daxil edin">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="testinput3">Password</label>
-                                    <div class="form-input">
-                                        <input id="textinput3" type="password" placeholder="Şifrəni daxil edin">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="testtext">Ətraflı məlumat</label>
-                                    <div class="form-input">
-                                        <textarea id="testtext" placeholder="Məlumat daxil edin"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="testtext">Ölkə</label>
-                                    <div class="form-select">
-                                        <select name="country" id="country" class="select-ns" data-placeholder="Ölkə seçin">
-                                            <option value="">Ölkə seçin</option>
-                                            <option value="Afganistan">Afghanistan</option>
-                                            <option value="Albania">Albania</option>
-                                            <option value="Algeria">Algeria</option>
-                                            <option value="American Samoa">American Samoa</option>
-                                            <option value="Andorra">Andorra</option>
-                                            <option value="Angola">Angola</option>
-                                            <option value="Anguilla">Anguilla</option>
-                                            <option value="Antigua &amp; Barbuda">Antigua &amp; Barbuda</option>
-                                            <option value="Argentina">Argentina</option>
-                                            <option value="Aruba">Aruba</option>
-                                            <option value="Australia">Australia</option>
-                                            <option value="Austria">Austria</option>
-                                            <option value="Azerbaijan">Azerbaijan</option>
-                                            <option value="Bahamas">Bahamas</option>
-                                            <option value="Bahrain">Bahrain</option>
-                                            <option value="Bangladesh">Bangladesh</option>
-                                            <option value="Barbados">Barbados</option>
-                                            <option value="Belarus">Belarus</option>
-                                            <option value="Belgium">Belgium</option>
-                                            <option value="Belize">Belize</option>
-                                            <option value="Benin">Benin</option>
-                                            <option value="Bermuda">Bermuda</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </form>
-                            <div style="height:100px"></div>
-                        </div>
+                        {!! $chart_pie->container() !!}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+@section('js')
+
+    <script src="{{ LarapexChart::cdn() }}"></script>
+
+    <!-- Or use the cdn directly -->
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> -->
+
+    <!-- Or use the local library as asset the package already provides a publication with this file *see below -->
+
+    {{--<!-- <script src="{{ asset('vendor/larapex-charts/apexchart.js') }}"></script> -->--}}
+
+    {{ $chart->script() }}
+    {{ $chart_pie->script() }}
+
+    @endsection

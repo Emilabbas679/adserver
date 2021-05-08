@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\EmptyTmpFolder'
     ];
 
+
     /**
      * Define the application's command schedule.
      *

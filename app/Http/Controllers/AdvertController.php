@@ -14,7 +14,6 @@ class AdvertController extends Controller
         $this->api = new API();
     }
 
-
     public function index(Request $request)
     {
         $page = 1;
@@ -66,8 +65,6 @@ class AdvertController extends Controller
         return view('advert.index', compact('pagination', 'page', 'cur_page', 'items', 'request','user_api'));
 
     }
-
-
 
     public function statistic(Request $request,$lang, $id, $type)
     {
@@ -126,9 +123,7 @@ class AdvertController extends Controller
         return redirect()->route('advert.index', app()->getLocale())->with('error', __('adnetwork.something_went_wrong'));
     }
 
-
-
-    public function create(Request $request, $lang)
+    public function create(Request $request)
     {
         if ($request->isMethod('post')){
             $request->validate([
@@ -147,6 +142,16 @@ class AdvertController extends Controller
                 $sites = $request->sites;
             if (isset($request->forbidden_sites))
                 $excluded = $request->forbidden_sites;
+
+            $frequency_period = 'day';
+            if ($request->frequency_period != '')
+                $frequency_period = $request->frequency_period;
+
+            $capping = 0;
+            if ($request->frequency_capping != '')
+                $capping = $request->frequency_capping;
+
+
             $opt = [
                 'set_id' => $request->set_id,
                 'user_id' => auth()->id(),
@@ -170,9 +175,11 @@ class AdvertController extends Controller
                 "ref_share_rate" => $request->ref_share_rate,
                 "frequency" => $request->frequency,
                 "accelerated" => $request->accelerated,
+
                 'targeting'=>[
-                    "frequency_capping" => 0,
-                    "frequency_period" => 'day',
+                    "frequency_capping" => $capping,
+                    'week_day_hours' => json_encode($request->week_day_hours),
+                    "frequency_period" =>  $frequency_period,
                     "site" => json_encode($sites),
                     "excluded_site" => json_encode($excluded),
                 ],
@@ -232,14 +239,13 @@ class AdvertController extends Controller
         else
             return redirect()->route('advert.index', app()->getLocale())->with('error', __('adnetwork.you_havenot_any_active_group'));
 
-
+        ;
         $sites = Cache::remember('sites', now()->addMinutes(10), function () {
             $result = $this->api->get_site(['status_id' => 11, 'limit' => 1000])->post();
             return $result['data']['rows'];
         });
         return view('advert.create', compact('sites', 'campaigns', 'groups'));
     }
-
 
     public function edit(Request $request, $lang, $id)
     {
@@ -265,6 +271,14 @@ class AdvertController extends Controller
                 $sites = $request->sites;
             if (isset($request->forbidden_sites))
                 $excluded = $request->forbidden_sites;
+
+            $frequency_period = 'day';
+            if ($request->frequency_period != '')
+                $frequency_period = $request->frequency_period;
+
+            $capping = 0;
+            if ($request->frequency_capping != '')
+                $capping = $request->frequency_capping;
             $opt = [
                 "ad_id" => $id,
                 'set_id' => $item['set_id'],
@@ -290,10 +304,11 @@ class AdvertController extends Controller
                 "frequency" => $request->frequency,
                 "accelerated" => $request->accelerated,
                 'targeting'=>[
-                    "frequency_capping" => 0,
-                    "frequency_period" => 'day',
                     "site" => json_encode($sites),
                     "excluded_site" => json_encode($excluded),
+                    "frequency_capping" => $capping,
+                    'week_day_hours' => json_encode($request->week_day_hours),
+                    "frequency_period" =>  $frequency_period,
                 ],
             ];
 
@@ -301,9 +316,10 @@ class AdvertController extends Controller
                 $opt['targeting']['frequency'] = 1;
 
             if ($request->ads_file == null){
+
                 $item_file = json_decode($item['file_data']);
                 if (gettype($item_file) != 'integer') {
-                    if (str_contains($item_file->dir_url,env('APP_URL'))) {
+                    if (isset($item_file->dir_url) and str_contains($item_file->dir_url,env('APP_URL'))) {
                         $file = str_replace(env('APP_URL').'/public','', $item_file->dir_url);
                         $file = public_path($file);
                         if(is_file($file)) {
@@ -324,7 +340,7 @@ class AdvertController extends Controller
             }
             else{
                 $item_file = json_decode($item['file_data']);
-                if (gettype($item_file) != 'integer') {
+                if (gettype($item_file) != 'integer' and $item_file != null) {
                     if (str_contains($item_file->dir_url,env('APP_URL'))) {
                         $file = str_replace(env('APP_URL').'/public','', $item_file->dir_url);
                         $file = public_path($file);
@@ -333,10 +349,11 @@ class AdvertController extends Controller
                         }
                     }
                 }
-                if ($item_file->dir_url != $request->ads_file) {
+                if ($item_file == null or $item_file->dir_url != $request->ads_file) {
                     $file = trim( $request->ads_file, '"');
                     $file = stripslashes($file);
                     $file = public_path($file);
+
                     if (is_file($file)) {
                         $mime = mime_content_type($file);
                         $ext = array_reverse(explode('.', $file))[0];
@@ -360,22 +377,23 @@ class AdvertController extends Controller
                         );
                     }
                 }
-                $opt['file_data'] = json_encode([
-                    'html' => null,
-                    'dir_url' => $filename,
-                    'down_url' => $filename,
-                    'id' => $id,
-                    'ad_id' =>$id,
-                    'size' => $filesize,
-                    'format' => $mime,
-                    'type' => $mime,
-                    'dimension_id' => 30,
-                ]);
+//                $opt['file_data'] = json_encode([
+//                    'html' => null,
+//                    'dir_url' => $filename,
+//                    'down_url' => $filename,
+//                    'id' => $id,
+//                    'ad_id' =>$id,
+//                    'size' => $filesize,
+//                    'format' => $mime,
+//                    'type' => $mime,
+//                    'dimension_id' => 30,
+//                ]);
             }
             $result = $this->api->update_ad($opt)->post();
             if (isset($result['status']) and $result['status'] == 'success')
                 return redirect()->route('advert.index', app()->getLocale())->with('success', __('adnetwork.successfully_updated'));
             $messages = $result['messages'];
+
             return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
         }
 
@@ -406,8 +424,7 @@ class AdvertController extends Controller
         return view('advert.edit', compact('item', 'campaigns','groups', 'sites', 's_sites', 'excludeds'));
     }
 
-
-    public function fileUpload(Request $request, $lang)
+    public function fileUpload(Request $request)
     {
         if($request->hasFile('file')) {
             $fileName = time().'_'.str_replace(' ', '-', $request->file->getClientOriginalName());
@@ -419,9 +436,33 @@ class AdvertController extends Controller
         return json_encode($data);
     }
 
-    public function fileDelete(Request $request, $lang)
+    public function fileDelete(Request $request)
     {
         return true;
 //        return $request->getContent();
+    }
+
+    public function statusUpdate($lang, $ad_id, $status_id) {
+        $opt = ['ad_id' => $ad_id, 'status_id' => $status_id];
+        $method = 'ad_status';
+        if ($status_id == 11) {
+            $item = $this->api->get_one_ad(['ad_id' => $ad_id])->post();
+            if (isset($item['status']) and $item['status'] == 'success') {
+                $opt['unit_cost_max'] = $item['data']['unit_cost_max'];
+                $opt['unit_cost_min'] = $item['data']['unit_cost_min'];
+            }
+            else
+                return redirect()->route('advert.index', app()->getLocale())->with('error', __('adnetwork.ad_not_found'));
+            $method = 'approve_ad';
+        }
+        $result = $this->api->$method($opt)->post();
+        if (isset($result['status']) and $result['status'] == 'success')
+            return redirect()->route('advert.index', app()->getLocale())->with('success', __('adnetwork.successfully_updated'));
+
+        $messages = [];
+        if (isset($result['messages']))
+            $messages = $result['messages'];
+        return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
+
     }
 }

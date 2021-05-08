@@ -3,8 +3,8 @@
     <div class="h-right">
         <div class="h-links">
             <ul>
-                <li class="hlp"><a href="test">{{__('admin.support')}}</a></li>
-                <li class="faq"><a href="test">{{__('admin.faq')}}</a></li>
+                <li class="hlp"><a href="test">{{__('adnetwork.support')}}</a></li>
+                <li class="faq"><a href="test">{{__('adnetwork.faq')}}</a></li>
             </ul>
         </div>
         <div class="notifications"><span>6</span></div>

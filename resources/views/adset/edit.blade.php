@@ -5,7 +5,8 @@
         <div class="breadcrumb">
             <ul>
                 <li><a href="{{route('home', app()->getLocale())}}">Smartbee</a></li>
-                <li><span>İdarə paneli</span></li>
+                <li><a href="{{route('adset.index', app()->getLocale())}}">{{__('adnetwork.adset_group')}}</a></li>
+                <li><span>{{$item['name']}}</span></li>
             </ul>
         </div>
 
@@ -18,7 +19,7 @@
                     @csrf
 
                     <div class="form-group">
-                        <label class="form-label" for="campaign_name">{{__('adnetwork.campaign')}}</label>
+                        <label class="form-label" for="campaign_name">{{__('adnetwork.campaign_name')}}</label>
                         <div class="form-input">
                             <input id="campaign_name" value='{{$item['campaign_name']}}' name="campaign_name" type="text" disabled>
                         </div>
@@ -26,7 +27,7 @@
 
 
                     <div class="form-group">
-                        <label class="form-label" for="group">{{__('adnetwork.group')}}</label>
+                        <label class="form-label" for="group">{{__('adnetwork.adset_name')}}</label>
                         <div class="form-input">
                             <input id="group" value='{{$item['name']}}' name="name" type="text">
                         </div>
@@ -91,26 +92,26 @@
                     <div class="form-group">
                         <div class="cols">
                             <div class="col-item col-a">
-                                <label class="form-label" for="os_id">{{__('adnetwork.os')}}</label>
+                                <label class="form-label" for="os_id">{{__('adnetwork.os_id')}}</label>
                                 @php $os = (array) json_decode($item['os_id']); @endphp
                                 <div class="form-select">
                                     <select class="b-select" name="os_id[]" id="os_id" multiple size="3">
-                                        <option value="22" @if(count($os) == 0 or in_array("22", $os)) selected @endif>{{__('adnetwork.windows')}}</option>
-                                        <option value="23" @if(count($os) == 0 or in_array("23", $os)) selected @endif>{{__('adnetwork.ios')}}</option>
-                                        <option value="24" @if(count($os) == 0 or in_array("24", $os)) selected @endif>{{__('adnetwork.android')}}</option>
-                                        <option value="81" @if(count($os) == 0 or in_array("81", $os)) selected @endif>{{__('adnetwork.other')}}</option>
+                                        <option value="22" @if(count($os) == 0 or in_array("22", $os)) selected @endif>{{__('adnetwork.ad_static_name_22')}}</option>
+                                        <option value="23" @if(count($os) == 0 or in_array("23", $os)) selected @endif>{{__('adnetwork.ad_static_name_23')}}</option>
+                                        <option value="24" @if(count($os) == 0 or in_array("24", $os)) selected @endif>{{__('adnetwork.ad_static_name_24')}}</option>
+                                        <option value="81" @if(count($os) == 0 or in_array("81", $os)) selected @endif>{{__('adnetwork.ad_static_name_81')}}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-item col-a">
-                                <label class="form-label" for="device_id">{{__('adnetwork.devices')}}</label>
+                                <label class="form-label" for="device_id">{{__('adnetwork.device_id')}}</label>
                                 @php $devices = (array) json_decode($item['device_id']); @endphp
                                 <div class="form-select">
                                     <select class="a-select" name="device_id[]" id="device_id" multiple size="3">
-                                        <option value="16" @if(count($devices) == 0 or in_array("16", $devices)) selected @endif>{{__('adnetwork.computer')}}</option>
-                                        <option value="17" @if(count($devices) == 0 or in_array("17", $devices)) selected @endif>{{__('adnetwork.mobile')}}</option>
-                                        <option value="18" @if(count($devices) == 0 or in_array("18", $devices)) selected @endif>{{__('adnetwork.tablet')}}</option>
-                                        <option value="77" @if(count($devices) == 0 or in_array("77", $devices)) selected @endif>{{__('adnetwork.other')}}</option>
+                                        <option value="16" @if(count($devices) == 0 or in_array("16", $devices)) selected @endif>{{__('adnetwork.ad_static_name_16')}}</option>
+                                        <option value="17" @if(count($devices) == 0 or in_array("17", $devices)) selected @endif>{{__('adnetwork.ad_static_name_17')}}</option>
+                                        <option value="18" @if(count($devices) == 0 or in_array("18", $devices)) selected @endif>{{__('adnetwork.ad_static_name_18')}}</option>
+                                        <option value="77" @if(count($devices) == 0 or in_array("77", $devices)) selected @endif>{{__('adnetwork.ad_static_name_77')}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -119,23 +120,23 @@
                     <div class="form-group">
                         <div class="cols">
                             <div class="col-item col-a">
-                                <label class="form-label" for="connection_type_id">{{__('adnetwork.connection_type_id')}}</label>
+                                <label class="form-label" for="connection_type_id">{{__('adnetwork.connection_type')}}</label>
                                 @php $cns = (array) json_decode($item['connection_type_id']); @endphp
                                 <div class="form-select">
                                     <select class="c-select" name="connection_type_id[]" id="connection_type_id" multiple size="2">
-                                        <option value="28" @if(count($cns) == 0 or in_array("28", $cns)) selected @endif>{{__('adnetwork.mobile_connection')}}</option>
-                                        <option value="29" @if(count($cns) == 0 or in_array("29", $cns)) selected @endif>{{__('adnetwork.ethernet')}}</option>
-                                        <option value="80" @if(count($cns) == 0 or in_array("80", $cns)) selected @endif>{{__('adnetwork.undefined')}}</option>
+                                        <option value="28" @if(count($cns) == 0 or in_array("28", $cns)) selected @endif>{{__('adnetwork.ad_static_name_28')}}</option>
+                                        <option value="29" @if(count($cns) == 0 or in_array("29", $cns)) selected @endif>{{__('adnetwork.ad_static_name_29')}}</option>
+                                        <option value="80" @if(count($cns) == 0 or in_array("80", $cns)) selected @endif>{{__('adnetwork.ad_static_name_80')}}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-item col-a">
-                                <label class="form-label" for="operator_id">{{__('adnetwork.operators')}}</label>
+                                <label class="form-label" for="operator_id">{{__('adnetwork.operator_id')}}</label>
                                 @php $ops = (array) json_decode($item['operator_id']); @endphp
                                 <div class="form-select">
                                     <select class="d-select" name="operator_id[]" id="operator_id" multiple size="1">
-                                        <option value="25" @if(count($ops) == 0 or in_array("25", $ops)) selected @endif>{{__('adnetwork.azercell')}}</option>
-                                        <option value="26" @if(count($ops) == 0 or in_array("26", $ops)) selected @endif>{{__('adnetwork.bakcell')}}</option>
+                                        <option value="25" @if(count($ops) == 0 or in_array("25", $ops)) selected @endif>{{__('adnetwork.ad_static_name_25')}}</option>
+                                        <option value="26" @if(count($ops) == 0 or in_array("26", $ops)) selected @endif>{{__('adnetwork.ad_static_name_26')}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -150,13 +151,13 @@
 
                                 <div class="form-select">
                                     <select class="e-select" name="age_group_id[]" id="age_group_id" multiple size="4">
-                                        <option value="30508" @if(count($ages) == 0 or in_array("30508", $ages)) selected @endif>{{__('adnetwork.other')}}</option>
-                                        <option value="30509" @if(count($ages) == 0 or in_array("30509", $ages)) selected @endif>18-24</option>
-                                        <option value="30510" @if(count($ages) == 0 or in_array("30510", $ages)) selected @endif>25-34</option>
-                                        <option value="30511" @if(count($ages) == 0 or in_array("30511", $ages)) selected @endif>35-44</option>
-                                        <option value="30512" @if(count($ages) == 0 or in_array("30512", $ages)) selected @endif>45-54</option>
-                                        <option value="30513" @if(count($ages) == 0 or in_array("30513", $ages)) selected @endif>55-64</option>
-                                        <option value="30514" @if(count($ages) == 0 or in_array("30514", $ages)) selected @endif>65+</option>
+                                        <option value="30508" @if(count($ages) == 0 or in_array("30508", $ages)) selected @endif>{{__('adnetwork.ad_static_name_30508')}}</option>
+                                        <option value="30509" @if(count($ages) == 0 or in_array("30509", $ages)) selected @endif>{{__('adnetwork.ad_static_name_30509')}}</option>
+                                        <option value="30510" @if(count($ages) == 0 or in_array("30510", $ages)) selected @endif>{{__('adnetwork.ad_static_name_30510')}}</option>
+                                        <option value="30511" @if(count($ages) == 0 or in_array("30511", $ages)) selected @endif>{{__('adnetwork.ad_static_name_30511')}}</option>
+                                        <option value="30512" @if(count($ages) == 0 or in_array("30512", $ages)) selected @endif>{{__('adnetwork.ad_static_name_30512')}}</option>
+                                        <option value="30513" @if(count($ages) == 0 or in_array("30513", $ages)) selected @endif>{{__('adnetwork.ad_static_name_30513')}}</option>
+                                        <option value="30514" @if(count($ages) == 0 or in_array("30514", $ages)) selected @endif>{{__('adnetwork.ad_static_name_30514')}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -165,8 +166,8 @@
                                 @php $gns = (array) json_decode($item['gender']); @endphp
                                 <div class="form-select">
                                     <select class="f-select" name="gender[]" id="gender" multiple>
-                                        <option value="30515" @if(count($gns) == 0 or in_array("30515", $gns)) selected @endif>{{__('adnetwork.male')}}</option>
-                                        <option value="30516" @if(count($gns) == 0 or in_array("30516", $gns)) selected @endif>{{__('adnetwork.female')}}</option>
+                                        <option value="30515" @if(count($gns) == 0 or in_array("30515", $gns)) selected @endif>{{__('adnetwork.ad_static_name_30515')}}</option>
+                                        <option value="30516" @if(count($gns) == 0 or in_array("30516", $gns)) selected @endif>{{__('adnetwork.ad_static_name_30516')}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -174,7 +175,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="country_id">{{__('adnetwork.countries')}}</label>
+                        <label class="form-label" for="country_id">{{__('adnetwork.country_id')}}</label>
                         @php $cnts = (array) json_decode($item['country_id']); @endphp
                         <div class="form-select">
                             <select class="g-select" name="country_id[]" id="country_id" multiple>
@@ -199,7 +200,7 @@
                     </div>
 
                     <div class="t-center">
-                        <button class="a-button b-green" type="submit">{{__('admin.submit')}}</button>
+                        <button class="a-button b-green" type="submit">{{__('adnetwork.submit')}}</button>
                     </div>
                 </form>
             </div>
@@ -215,7 +216,7 @@
 @section('js')
     <script type="text/javascript" src="/js/datepicker.min.js"></script>
     <script type="text/javascript" src="/js/timepicker.min.js"></script>
-    <script type="text/javascript" src="/js/vanillaSelectBox.js?v201"></script>
+    <script type="text/javascript" src="/js/vanillaSelectBox.js?v202"></script>
     <script type="text/javascript" src="/js/tagify.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
@@ -228,45 +229,45 @@
             $('.bs-timepicker').timepicker();
 
             let mySelect = new vanillaSelectBox(".b-select",{
-                placeHolder: "Seçim edin",
+                placeHolder: "{{__('adnetwork.choose')}}",
                 translations: {
-                    "items": "seçilən"
+                    "items": "{{__('adnetwork.chosed')}}"
                 }
             });
             let mySelect2 = new vanillaSelectBox(".a-select",{
-                placeHolder: "Seçim edin",
+                placeHolder: "{{__('adnetwork.choose')}}",
                 translations: {
-                    "items": "seçilən"
+                    "items": "{{__('adnetwork.chosed')}}"
                 }
             });
             let mySelect3 = new vanillaSelectBox(".c-select",{
-                placeHolder: "Seçim edin",
+                placeHolder: "{{__('adnetwork.choose')}}",
                 translations: {
-                    "items": "seçilən"
+                    "items": "{{__('adnetwork.chosed')}}"
                 }
             });
             let mySelect4 = new vanillaSelectBox(".d-select",{
-                placeHolder: "Seçim edin",
+                placeHolder: "{{__('adnetwork.choose')}}",
                 translations: {
-                    "items": "seçilən"
+                    "items": "{{__('adnetwork.chosed')}}"
                 }
             });
             let mySelect5 = new vanillaSelectBox(".e-select",{
-                placeHolder: "Seçim edin",
+                placeHolder: "{{__('adnetwork.choose')}}",
                 translations: {
-                    "items": "seçilən"
+                    "items": "{{__('adnetwork.chosed')}}"
                 }
             });
             let mySelect6 = new vanillaSelectBox(".f-select",{
-                placeHolder: "Seçim edin",
+                placeHolder: "{{__('adnetwork.choose')}}",
                 translations: {
-                    "items": "seçilən"
+                    "items": "{{__('adnetwork.chosed')}}"
                 }
             });
             let mySelect7 = new vanillaSelectBox(".g-select",{
-                placeHolder: "Seçim edin",
+                placeHolder: "{{__('adnetwork.choose')}}",
                 translations: {
-                    "items": "seçilən"
+                    "items": "{{__('adnetwork.chosed')}}"
                 }
             });
             var tags = document.querySelector('.b-tag');
@@ -274,6 +275,9 @@
             var tags2 = document.querySelector('.b-tag2');
             new Tagify(tags2)
         });
+
+        {{--$("li[data-text='Select All']").attr('data-text', "{{__('adnetwork.all')}}")--}}
+
     </script>
 
 @endsection

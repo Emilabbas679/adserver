@@ -58,3 +58,46 @@ if (!function_exists('impression_stats')){
         return $items;
     }
 }
+
+
+if (!function_exists('permission_include')){
+    function permission_include()
+    {
+        if (auth()->user()->user_group_id) {
+            $group_id = auth()->user()->user_group_id;
+            $file = base_path("resources/permissions/groups/$group_id.php");
+            if (!is_file($file)) {
+                $api = new \App\Http\Controllers\API();
+                $data = $api->get_user_group_params(['user_group_id' => $group_id])->post();
+                $data = $data['data'];
+                $ftemplate = "<?php".' $permissions = [';
+                file_put_contents($file, $ftemplate);
+                $current = file_get_contents($file);
+                foreach ($data as $k=>$v) {
+                    if ($v == true) $v = 'true'; else $v='false';
+                    $current = $current."\n".'"'.$k.'" => "'.$v.'",'."\n";
+                }
+                $current = $current."\n ]; ";
+                file_put_contents($file, $current);
+            }
+            include($file);
+            return $permissions;
+        }
+        else
+            return [];
+
+    }
+}
+
+
+if (!function_exists('check_permission')){
+    function check_permission($key, $permissions) {
+        return true;
+        if (isset($permissions[$key]) and $permissions[$key] == 'true'){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+}

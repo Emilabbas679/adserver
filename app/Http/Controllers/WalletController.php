@@ -17,7 +17,20 @@ class WalletController extends Controller
     {
         $item = auth()->user();
         if ($request->isMethod('post')){
-
+            $opt = [
+                "user_id" => auth()->id(),
+                'email' => $request->email,
+                'amount' => $request->amount,
+                'phone' => $request->phone,
+                'action_id' => $request->action_id,
+                'cart_type' => $request->cardType,
+                'bank_type' => $request->bankType,
+                'description' => 'increase'
+            ];
+//            $result = $this->api->increase_wallet($opt)->post();
+//            dd($result);
+            dd($opt);
+            dd($request->all());
         }
         return view('auth.profile.wallet.increase', compact('item'));
     }

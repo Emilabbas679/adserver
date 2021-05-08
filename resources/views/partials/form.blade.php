@@ -8,7 +8,18 @@
     <div class="form-group">
         <label class="form-label" for="{{$data['id']}}"> {{$data['title']}}</label>
         <div class="form-input">
-            <input id="{{$data['id']}}" value='{{$data['value']}}' name="{{$data['id']}}" type="text" placeholder="{{$data['title']}}">
+            <input id="{{$data['id']}}"  @if(old($data['id'])) value="{{old($data['id'])}}" @else value='{{$data['value']}}' @endif name="{{$data['id']}}" type="text" placeholder="{{$data['title']}}">
+        </div>
+        @error($data['id'])
+        <div class="notification-error">{{ $message }}</div>
+        @enderror
+
+    </div>
+    @elseif($data['type'] == 'input:date')
+    <div class="form-group">
+        <label class="form-label" for="{{$data['id']}}"> {{$data['title']}}</label>
+        <div class="form-input">
+            <input id="{{$data['id']}}" @if(old($data['id'])) value="{{old($data['id'])}}" @else value='{{$data['value']}}' @endif name="{{$data['id']}}" type="date" placeholder="{{$data['title']}}">
         </div>
         @error($data['id'])
         <div class="notification-error">{{ $message }}</div>
@@ -22,6 +33,7 @@
             <input id="{{$data['id']}}" type="password" value='{{$data['value']}}' name="{{$data['id']}}" type="text" autocomplete="off" placeholder="{{$data['title']}}">
         </div>
     </div>
+
 
     @elseif($data['type'] == 'input:readonly')
     <div class="form-group">
@@ -69,7 +81,7 @@
         <div class="form-select">
             <select class="select-ns" name="{{$data['id']}}" data-placeholder="{{$data['placeholder']}}" id="{{$data['id']}}" @if(isset($data['disabled']) and $data['disabled'] == true ) disabled @endif>
                 @foreach($data['options'] as $option)
-                    <option value="{{$option['id']}}" @if($option['selected'] == 1) selected @endif>{{$option['text']}}</option>
+                    <option value="{{$option['id']}}" @if($option['selected'] == 1) selected @endif  @if(old($data['id']) and old($data['id']) == $option['id']) selected @endif>{{$option['text']}}</option>
                 @endforeach
             </select>
         </div>
@@ -84,6 +96,18 @@
                         <option value="{{$option['id']}}" @if($option['selected'] == 1) selected @endif>{{$option['text']}}</option>
                     @endforeach
                 </select>
+                @error($data['name'])
+                <div class="notification-error">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
+
+
+    @elseif($data['type'] == 'textarea')
+        <div class="form-group">
+            <label class="form-label" for="{{$data['id']}}">{{$data['title']}} </label>
+            <div class="form-select">
+                <textarea name="{{$data['name']}}" id="{{$data['id']}}" cols="15" style="width: 100%" placeholder="{{$data['placeholder']}}">{{$data['value']}}</textarea>
                 @error($data['name'])
                 <div class="notification-error">{{ $message }}</div>
                 @enderror

@@ -17,12 +17,12 @@
             <th>{{__('adnetwork.ctr')}}</th>
             <th>{{__('adnetwork.eCPC')}}</th>
             <th>{{__('adnetwork.video_start')}}</th>
-            <th>{{__('adnetwork.25_percent_kvartil')}}</th>
-            <th>{{__('adnetwork.50_percent_kvartil')}}</th>
-            <th>{{__('adnetwork.75_percent_kvartil')}}</th>
-            <th>{{__('adnetwork.100_percent_kvartil')}}</th>
+            <th>{{__('adnetwork.firstquartile')}}</th>
+            <th>{{__('adnetwork.midpoint')}}</th>
+            <th>{{__('adnetwork.thirdquartile')}}</th>
+            <th>{{__('adnetwork.complete')}}</th>
             <th>{{__('adnetwork.spent_amount')}}</th>
-            <th>{{__('adnetwork.eCPM')}}</th>
+            <th>{{__('adnetwork.ecpm')}}</th>
             @elseif($stats_type == 'get_spent_site')
 
                 <th>{{__('adnetwork.domain')}}</th>
@@ -32,12 +32,12 @@
                 <th>{{__('adnetwork.reach')}}</th>
                 <th>{{__('adnetwork.unique_click')}}</th>
                 <th>{{__('adnetwork.video_start')}}</th>
-                <th>{{__('adnetwork.25_percent_kvartil')}}</th>
-                <th>{{__('adnetwork.50_percent_kvartil')}}</th>
-                <th>{{__('adnetwork.75_percent_kvartil')}}</th>
-                <th>{{__('adnetwork.100_percent_kvartil')}}</th>
+                <th>{{__('adnetwork.firstquartile')}}</th>
+                <th>{{__('adnetwork.midpoint')}}</th>
+                <th>{{__('adnetwork.thirdquartile')}}</th>
+                <th>{{__('adnetwork.complete')}}</th>
                 <th>{{__('adnetwork.spent_amount')}}</th>
-                <th>{{__('adnetwork.eCPM')}}</th>
+                <th>{{__('adnetwork.ecpm')}}</th>
 
             @else
                 <th>{{__('adnetwork.day')}}</th>

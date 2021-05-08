@@ -2,14 +2,12 @@
 @section('title', 'Translations')
 @section('content')
     @csrf
-
     <style>
         .translate-page {}
         .translate-page .translate-top {margin-bottom:15px;}
         .translate-top .dropdown, .translate-top .a-button.with-icon {float:left; margin-right:15px; display:block;}
         .tr-text {font-size: 16px; line-height: 24px; font-weight: 500; color: #868686; margin-bottom:10px;}
     </style>
-
     <div class="content-wrapper">
         <div class="container">
             <!-- Main content -->
@@ -18,11 +16,11 @@
                     <div class="breadcrumb">
                         <ul>
                             <li><a href="/">Adserver</a></li>
-                            <li><span>Translate</span></li>
+                            <li><span>{{__('adnetwork.lang')}}</span></li>
                         </ul>
                     </div>
                     <div class="a-block">
-                        <div class="a-block-head">Tərcümənin idarə edilməsi</div>
+                        <div class="a-block-head">{{__('adnetwork.lang')}}</div>
                         <div class="a-block-body">
                             @include('flash-message')
                             <div class="translate-top">
@@ -38,10 +36,10 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <button type="button" class="b-scn a-button with-icon add" onclick="cloneRow()">Sətir əlavə et</button>
-                                <button type="button" class="b-scn a-button with-icon addfile mbtn" data-target="#fileCreateModal">Fayl əlavə et</button>
+{{--                                <button type="button" class="b-scn a-button with-icon add" onclick="cloneRow()">{{__('adnetwork.add_new_column')}}</button>--}}
+{{--                                <button type="button" class="b-scn a-button with-icon addfile mbtn" data-target="#fileCreateModal">{{__('adnetwork.add_new_file')}}</button>--}}
 {{--                                <button type="button" class="b-green a-button f-right" onclick="$('#form').submit()">Yadda saxla</button>--}}
-                                <a class="b-green a-button f-right" href="{{route('translation_update_cron', app()->getLocale())}}">Yenilə</a>
+                                <a class="b-green a-button f-right" href="{{route('translation_update_cron', app()->getLocale())}}">{{__('adnetwork.refresh')}}</a>
                             </div>
                             <form action method="post" id="form">
                                 @csrf
@@ -53,7 +51,7 @@
                                             <th>Azərbaycanca</th>
                                             <th>English</th>
                                             <th>Русский</th>
-                                            <th class="w-100">Sil</th>
+                                            <th>Türkce</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -69,7 +67,7 @@
                                                         <td><textarea class="x-textarea" name="{{$k}}[]" readonly></textarea></td>
                                                     @endif
                                                 @endforeach
-                                                <td><button type="button" class="del bt-icon b-red trash m-center" data-key="{{$key}}"></button></td>
+{{--                                                <td><button type="button" class="del bt-icon b-red trash m-center" data-key="{{$key}}"></button></td>--}}
                                             </tr>
                                         @endforeach
                                         </tbody>

@@ -71,13 +71,13 @@ class UserController extends Controller
                     'email' => $data['email'],
                     'gender' => $data['gender'],
                     'id' => $data['user_id'],
+                    'user_group_id' => $data['user_group_id'],
                     'phone' => $data['phone'],
                     'password' => Hash::make($request->password)
                 ]);
             }
             $user = User::find($data['user_id']);
-
-
+            $user->update(['user_group_id' => $data['user_group_id']]);
             Auth::Login($user);
 
             return redirect('/');
@@ -128,6 +128,7 @@ class UserController extends Controller
                     'updated_at' => Carbon::now(),
                     'name' => $data['full_name'],
                     'email' => $data['email'],
+                    'user_group_id' => $data['user_group_id'],
                     'gender' => $data['gender'],
                     'id' => $data['user_id'],
                     'phone' => $data['phone']
@@ -136,6 +137,9 @@ class UserController extends Controller
             }
 
             Auth::login($user, $opt['remember_me']);
+            $user->update(['user_group_id' => $data['user_group_id']]);
+
+
             return redirect()->route('home');
         }
         else
@@ -188,7 +192,8 @@ class UserController extends Controller
                     'name' => $request->email,
                     'email' => $request->email,
                     'phone' => $phone,
-                    'id' =>  $data['user_id']
+                    'id' =>  $data['user_id'],
+                    'user_group_id' =>  $data['user_group_id']
                 ]);
                 $user = User::find($data['user_id']);
                 Auth::login($user, true);
@@ -245,7 +250,8 @@ class UserController extends Controller
                     'name' => $request->email,
                     'email' => $request->email,
                     'phone' => $phone,
-                    'id' =>  $data['user_id']
+                    'id' =>  $data['user_id'],
+                    'user_group_id' =>  $data['user_group_id']
                 ]);
                 $user = User::find($data['user_id']);
                 Auth::login($user, true);
@@ -355,13 +361,7 @@ class UserController extends Controller
         }
         else
             return redirect()->route('advertiser_password', app()->getLocale())->with('error', __('notification.url_expired'));
-
     }
-
-
-
-
-
 
 
     public function recaptcha_verify( $recaptcha_response )

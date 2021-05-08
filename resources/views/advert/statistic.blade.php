@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', __('adnetwork.statistic'))
+@section('title', __('adnetwork.stats'))
 @section('content')
     <div class="content-inner">
         <div class="breadcrumb">
             <ul>
                 <li><a href="{{route('home', app()->getLocale())}}">Smartbee</a></li>
-                <li><span>İdarə paneli</span></li>
+                <li><span>{{__('adnetwork.stats')}}</span></li>
             </ul>
         </div>
 
@@ -19,11 +19,11 @@
                         <div class="cols col-table">
                             <div class="tb-item col-item col-b">
                                 <div class="form-select">
-                                    <select name="stats_type" id="country" class="select-ns" data-placeholder="{{__('placeholders.all_statuses')}}">
-                                        <option value="get_spent_ad" {{selected_exist($request, 'stats_type', 'get_spent_ad')}}>{{__('adnetwork.ads_costs')}}</option>
-                                        <option value="get_spent_site" {{selected_exist($request, 'stats_type', 'get_spent_site')}}>{{__('adnetwork.websites')}}</option>
-                                        <option value="get_revenue_url" {{selected_exist($request, 'stats_type', 'get_revenue_url')}}>{{__('adnetwork.page_url')}}</option>
-                                        <option value="get_spent_daily" {{selected_exist($request, 'stats_type', 'get_spent_daily')}}>{{__('adnetwork.ads_cost_daily')}}</option>
+                                    <select name="stats_type" id="country" class="select-ns" data-placeholder="{{__('adnetwork.all')}}">
+                                        <option value="get_spent_ad" {{selected_exist($request, 'stats_type', 'get_spent_ad')}}>{{__('adnetwork.spentadvert')}}</option>
+                                        <option value="get_spent_site" {{selected_exist($request, 'stats_type', 'get_spent_site')}}>{{__('adnetwork.get_spent_site')}}</option>
+                                        <option value="get_revenue_url" {{selected_exist($request, 'stats_type', 'get_revenue_url')}}>{{__('adnetwork.get_revenue_url')}}</option>
+                                        <option value="get_spent_daily" {{selected_exist($request, 'stats_type', 'get_spent_daily')}}>{{__('adnetwork.get_spent_daily')}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -78,10 +78,10 @@
 
     <script>
         $('#users').select2({
-            placeholder: "{{__('placeholders.username')}}",
+            placeholder: "{{__('adnetwork.username')}}",
             language: {
                 searching: function() {
-                    return "{{__('placeholders.searching')}}";
+                    return "{{__('adnetwork.searching')}}";
                 }
             },
 

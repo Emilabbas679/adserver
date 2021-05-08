@@ -29,10 +29,39 @@ class ApiController extends Controller
             $ids = array_column($rows,'user_id');
             $items = [];
             if ($page == 1)
-                $items[] = ['id' => 0, 'text'=>__('notification.not_user')];
+                $items[] = ['id' => 0, 'text'=>__('adnetwork.no_user')];
             for ($i=0;$i<10;$i++){
                 if (isset($ids[$i]))
                     $items[] = ['id'=>$ids[$i], 'text'=>$emails[$i]];
+            }
+            $data = ['results' => $items, 'pagination' => ['more' => $more]];
+            return $data;
+        }
+        return false;
+    }
+
+    public function selectCampaigns(Request $request)
+    {
+        $page = $request->page;
+        $opt = ['page' => $page, 'limit'=>10];
+        if($request->has('search'))
+            $opt['searchQuery'] = $request->search;
+        $data = $this->api->get_campaign($opt)->post();
+        if (isset($data['status']) and $data['status'] == 'success'){
+            $count = $data['data']['count'];
+            $rows = $data['data']['rows'];
+            $more = false;
+            if ($count > $page*10)
+                $more = true;
+            $names = array_column($rows,'name');
+            $ids = array_column($rows,'campaign_id');
+
+            $items = [];
+            if ($page == 1)
+                $items[] = ['id' => 0, 'text'=>__('adnetwork.no_user')];
+            for ($i=0;$i<10;$i++){
+                if (isset($ids[$i]))
+                    $items[] = ['id'=>$ids[$i], 'text'=>$names[$i]];
             }
             $data = ['results' => $items, 'pagination' => ['more' => $more]];
             return $data;
@@ -58,7 +87,7 @@ class ApiController extends Controller
             $ids = array_column($rows,'agency_id');
             $items = [];
             if ($page == 1)
-                $items[] = ['id' => 0, 'text'=>__('notification.not_agency')];
+                $items[] = ['id' => 0, 'text'=>__('adnetwork.no_agency')];
             for ($i=0;$i<10;$i++){
                 if (isset($ids[$i]))
                     $items[] = ['id'=>$ids[$i], 'text'=>$names[$i]];
@@ -89,7 +118,7 @@ class ApiController extends Controller
             $ids = array_column($rows,'site_id');
             $items = [];
             if ($page == 1)
-                $items[] = ['id' => 0, 'text'=>__('notification.not_user')];
+                $items[] = ['id' => 0, 'text'=>__('adnetwork.no_user')];
             for ($i=0;$i<10;$i++){
                 if (isset($ids[$i]))
                     $items[] = ['id'=>$ids[$i], 'text'=>$domains[$i]];

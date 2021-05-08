@@ -1,5 +1,5 @@
 @extends('layouts.auth')
-@section('title', __('titles.advertiser_register'))
+@section('title', __('adnetwork.advertiser_login_sub_title'))
 @section('header')
 <script src="https://www.google.com/recaptcha/api.js?render=6LfpZoEaAAAAAAvddE93YljQ1NmtqpmqtFiG8Ezl"></script>
 <script>
@@ -40,23 +40,23 @@
                             <a href="{{route('advertiser_login', app()->getLocale())}}"></a>
                         </div>
                         <div class="return">
-                            <a href="https://smartbee.az"><span>{{__('auth.return_home')}}</span></a>
+                            <a href="{{route('home')}}"><span>{{__('adnetwork.ana_s_hif_y_qay_t')}}</span></a>
                         </div>
                     </div>
                     <div class="lp-content">
                         <div class="lp-col">
                             <div class="lp-left">
                                 <div class="lp-symb symb-2 w-2"></div>
-                                <div class="lp-a">{{__('auth.advertiser_title')}}</div>
+                                <div class="lp-a">{{__('adnetwork.advertiser_title')}}</div>
                                 <div class="lp-b">
-                                    {{__('auth.advertiser_welcome')}}
+                                    {{__('adnetwork.advertiser_welcome')}}
                                 </div>
                             </div>
                         </div>
                         <div class="lp-col">
                             <div class="lp-right for-reg">
-                                <h2 class="lp-a">{{__('auth.register')}}</h2>
-                                <div class="lp-b">{{__('auth.smartbee_platform')}}</div>
+                                <h2 class="lp-a">{{__('adnetwork.register')}}</h2>
+                                <div class="lp-b">{{__('adnetwork.advertiser_login_sub_title')}}</div>
                                 <div class="lp-form">
 
                                     <form action="{{route('advertiser_register', app()->getLocale())}}" METHOD="POST" id="register-form">
@@ -65,7 +65,7 @@
 
 
                                         <div class="lp-input mail">
-                                            <input id="email" class="@error('email') input-error @enderror" type="text" placeholder="{{__('placeholders.user_email')}}" name="email" value="{{old('email')}}">
+                                            <input id="email" class="@error('email') input-error @enderror" type="text" placeholder="{{__('user.email')}}" name="email" value="{{old('email')}}">
                                         </div>
                                         @error('email')
                                         <div class="notification-error">{{ $message }}</div>
@@ -82,7 +82,7 @@
                                         <input type="hidden" name="phone" id="phone">
 
                                         <div class="lp-input pass">
-                                            <input id="pass" type="password"  class="@error('password') input-error @enderror"  placeholder="{{__('placeholders.user_password')}}" name="password" value="{{old('password')}}">
+                                            <input id="pass" type="password"  class="@error('password') input-error @enderror"  placeholder="{{__('user.password')}}" name="password" value="{{old('password')}}">
                                             <div class="show-pass" onclick="showp()"></div>
                                         </div>
                                         @error('password')
@@ -92,14 +92,14 @@
                                         <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
 
                                         <div class="lp-button">
-                                            <button type="submit" id="rgst">{{__('auth.register')}}</button>
+                                            <button type="submit" id="rgst">{{__('adnetwork.register')}}</button>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="lp-bt">
                                     <div class="lp-block">
-                                        <div class="lp-l">{{__('auth.hesabin_var')}}</div>
-                                        <div class="lp-r"><a href="{{route('advertiser_login', app()->getLocale())}}">{{__('auth.login')}}</a></div>
+                                        <div class="lp-l">{{__('user.m_vcud_hesab_n_var')}}</div>
+                                        <div class="lp-r"><a href="{{route('advertiser_login', app()->getLocale())}}">{{__('adnetwork.login')}}</a></div>
                                     </div>
                                 </div>
                             </div>

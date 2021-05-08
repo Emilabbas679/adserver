@@ -1,7 +1,4 @@
-<?php
-
- ?>
-
+@php $permissions = permission_include() @endphp
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +13,6 @@
 </head>
 <body>
 <div class="x-admin">
-
     @include('partials.header')
     @include('partials.sidebar')
     <!-- Main content start -->
