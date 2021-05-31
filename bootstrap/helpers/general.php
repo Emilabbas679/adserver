@@ -2,6 +2,7 @@
 
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 
 if (!function_exists('api')) {
     function api()
@@ -92,12 +93,90 @@ if (!function_exists('permission_include')){
 
 if (!function_exists('check_permission')){
     function check_permission($key, $permissions) {
-        return true;
         if (isset($permissions[$key]) and $permissions[$key] == 'true'){
             return true;
         }
         else{
             return false;
         }
+    }
+}
+if (!function_exists('bank_action_types')){
+    function bank_action_types() {
+        $type_options = [
+            ['id' => 'pub_site', 'text' => __('adnetwork.sites'), 'selected' => 1],
+//            ['id' => 'user', 'text' => __('adnetwork.salary'), 'selected' => 0],
+            ['id' => 'user_agency', 'text' => __('adnetwork.agencies'), 'selected' => 0],
+            ['id' => 'pub_wallet', 'text' => __('adnetwork.pub_wallet'), 'selected' => 0],
+            ['id' => 'finance_cost', 'text' => __('adnetwork.finance_cost'), 'selected' => 0],
+        ];
+        return $type_options;
+    }
+}
+
+
+
+if (!function_exists('status_options')){
+    function status_options() {
+        $status_options = [
+            ['id' => "", 'text' => __('adnetwork.all'), 'selected' => 1],
+            ['id' => "11", 'text' => __('adnetwork.ad_static_status_11'), 'selected' => 0],
+            ['id' => "12", 'text' => __('adnetwork.ad_static_status_12'), 'selected' => 0],
+            ['id' => "17", 'text' => __('adnetwork.ad_static_status_17'), 'selected' => 0],
+            ['id' => "10", 'text' => __('adnetwork.ad_static_status_10'), 'selected' => 0],
+            ['id' => "27", 'text' => __('adnetwork.ad_static_status_27'), 'selected' => 0],
+            ['id' => "40", 'text' => __('adnetwork.ad_static_status_40'), 'selected' => 0],
+
+        ];
+        return $status_options;
+    }
+}
+
+
+if (!function_exists('user_login_type')){
+    function user_login_type($type){
+        $login_type = Session::get('user_login_type');
+        if (!$login_type) {
+            $login_type = 'advertiser';
+            Session::put('user_login_type', $login_type);
+        }
+        if ($login_type == $type)
+            return true;
+        else
+            return false;
+
+    }
+}
+
+if (!function_exists('get_dimension')){
+    function get_dimension($id){
+        if($id == '3')
+            return '728x90';
+        elseif($id == '5')
+            return '320x100';
+        elseif($id == '6')
+            return '300x600';
+        elseif($id == '7')
+            return '300x250';
+        elseif($id == '12')
+            return '468x60';
+        elseif($id == '16')
+            return '240x400';
+        elseif($id == '17')
+            return '160x600';
+        elseif($id == '30')
+            return __('adnetwork.ad_static_dimension_name_30');
+        else
+            return $id;
+    }
+}
+if (!function_exists('get_format_type')){
+    function get_format_type($id){
+        if($id == '0')
+            return __('adnetwork.all');
+        elseif($id == '261')
+            return __('adnetwork.ad_static_name_261');
+        else
+            return $id;
     }
 }

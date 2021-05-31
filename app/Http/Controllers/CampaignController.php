@@ -17,6 +17,7 @@ class CampaignController extends Controller
         $page = 1;
         if ($request->has("page"))
             $page = $request->page;
+
         $opt = ["limit"=>10, "page"=>$page, 'calculated'=> 1];
         $query = '';
         if ($request->has('searchQuery') and $request->searchQuery != ''){
@@ -31,12 +32,12 @@ class CampaignController extends Controller
 
         $user_api = [];
         $user_get = '';
-        if ($request->has('user_id') and $request->user_id != ''){
+        if ($request->has('user_id') and $request->user_id != '' and $request->user_id != '0'){
             $opt['user_id'] = $request->user_id;
             $user_get = "&user_id=".$opt['user_id'];
             $user_api = $this->api->get_user(['user_id'=>$opt['user_id']])->post();
             if (!isset($user_api['status']) or (isset($user_api['status']) and $user_api['status'] == 'failed'))
-                return redirect()->route('campaign.index')->with('error', __('notification.user_not_found'));
+                return redirect()->route('campaign.index', app()->getLocale())->with('error', __('notification.user_not_found'));
             $user_api = $user_api['data'][0];
         }
 
@@ -48,7 +49,7 @@ class CampaignController extends Controller
         if (isset($data['status']) and $data['status'] == 'success') {
             $items = $data['data']['rows'];
             $count = $data['data']['count'];
-            $pages = round($count/10);
+            $pages = ceil($count/10);
             if (count($items) > 0 )
                 $pagination = PaginationLinks::paginationCreate($cur_page,$pages,2,
                     '<li class="page-item"><a class="page-link" href="?page=%d'.$status.$query.$user_get.'">%d</a></li>',

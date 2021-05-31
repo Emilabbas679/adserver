@@ -20,7 +20,7 @@
     @foreach($message as $m)
     <div class="alert alert-danger">
         <button type="button" class="a-close"></button>
-        <strong>{{ $m }}</strong>
+        <strong>{!! $m !!}</strong>
     </div>
     @endforeach
 @endif
@@ -45,7 +45,7 @@
 @if ($errors->any())
     <div class="alert alert-danger">
         <button type="button" class="a-close"></button>
-        {{__('notification.check_error')}}
+        {{__('adnetwork.check_error')}}
     </div>
 @endif
 

@@ -4,7 +4,7 @@
     <div class="content-inner">
         <div class="breadcrumb">
             <ul>
-                <li><a href="{{route('home', app()->getLocale())}}">Smartbee</a></li>
+                <li><a href="{{route('dashboard', app()->getLocale())}}">Smartbee</a></li>
                 <li><span>İdarə paneli</span></li>
             </ul>
         </div>

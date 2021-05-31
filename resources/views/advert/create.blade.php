@@ -328,8 +328,8 @@
                             <label class="form-label" for="accelerated">{{__('adnetwork.accelerated')}}</label>
                             <div class="form-select">
                                 <select class="select-ns" name="accelerated" id="accelerated">
-                                    <option value="0" {{selected(old('accelerated'), 0)}}>{{__('adnetwork.yes')}}</option>
-                                    <option value="1"  {{selected(old('accelerated'), 1)}}>{{__('adnetwork.no')}}</option>
+                                    <option value="0" {{selected(old('accelerated'), 0)}}>{{__('adnetwork.no')}}</option>
+                                    <option value="1"  {{selected(old('accelerated'), 1)}}>{{__('adnetwork.yes')}}</option>
                                 </select>
                             </div>
                         </div>
@@ -338,8 +338,8 @@
                             <label class="form-label" for="no_earning">{!! __('adnetwork.no_earning') !!}</label>
                             <div class="form-select">
                                 <select class="select-ns" name="no_earning" id="no_earning">
-                                    <option value="0"  {{selected(old('no_earning'), 0)}}>{{__('adnetwork.no_earning_true')}}</option>
-                                    <option value="1"  {{selected(old('no_earning'), 1)}}>{!! __('adnetwork.no_earning') !!}</option>
+                                    <option value="0"  {{selected(old('no_earning'), 0)}}>{{__('adnetwork.no_earning')}}</option>
+                                    <option value="1"  {{selected(old('no_earning'), 1)}}>{!! __('adnetwork.no_earning_true') !!}</option>
                                 </select>
                             </div>
                         </div>

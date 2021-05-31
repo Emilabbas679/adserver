@@ -56,7 +56,7 @@ class AdvertController extends Controller
         if (isset($data['status']) and $data['status'] == 'success') {
             $items = $data['data']['rows'];
             $count = $data['data']['count'];
-            $pages = round($count/10);
+            $pages = ceil($count/10);
             if (count($items) > 0 )
                 $pagination = PaginationLinks::paginationCreate($cur_page,$pages,2,
                     '<li class="page-item"><a class="page-link" href="?page=%d'.$status.$query.$user_get.$format.'">%d</a></li>',
@@ -74,7 +74,7 @@ class AdvertController extends Controller
         $stats_type = "get_spent_ad";
         $diff=date_diff(date_create($start_date), date_create($end_date));
         $diff = $diff->format('%a')+1;
-        $page = 1;
+        $page = 0;
         $limit = 100;
 
 
@@ -86,7 +86,6 @@ class AdvertController extends Controller
 
         if ($request->has('stats_type') and $request->stats_type != '')
             $stats_type = $request->stats_type;
-
 
         if ($stats_type == 'get_spent_ad_archive')
             $limit = $diff;
@@ -108,15 +107,16 @@ class AdvertController extends Controller
             $opt['campaign_id'] = $id;
         elseif($type == 'adset')
             $opt['set_id'] = $id;
+        elseif($type == 'site') {
+            $opt['site_id'] = $id;
+            $opt['stats_type'] = 'get_revenue_site';
+            $stats_type = $opt['stats_type'];
+        }
         else
             abort(404);
-
-
         $result = $this->api->click_impression_stats($opt)->post();
-
         if (isset($result['status']) and $result['status'] == 'success') {
             $items = $result['data']['stats'];
-//            dd($items);
             return view('advert.statistic', compact('items' , 'request', 'id', 'stats_type'));
 
         }
@@ -136,12 +136,6 @@ class AdvertController extends Controller
                     'target_url.required' => __('notification.target_url_is_required'),
                 ]
             );
-            $sites = [];
-            $excluded = [];
-            if (isset($request->sites))
-                $sites = $request->sites;
-            if (isset($request->forbidden_sites))
-                $excluded = $request->forbidden_sites;
 
             $frequency_period = 'day';
             if ($request->frequency_period != '')
@@ -150,6 +144,28 @@ class AdvertController extends Controller
             $capping = 0;
             if ($request->frequency_capping != '')
                 $capping = $request->frequency_capping;
+
+
+            $targeting['frequency_capping'] = $capping;
+            $targeting['frequency_period'] = $frequency_period;
+            if ($request->week_day_hours != null) {
+                $days = [];
+                foreach ($request->week_day_hours as $s)
+                    $days[$s] = $s;
+                $targeting['week_day_hours'] = $this->multiple($days);
+            }
+            if ($request->has('sites') and count($request->sites) > 0){
+                $sites = [];
+                foreach ($request->sites as $site)
+                    $sites[$site] =  $site;
+                $targeting['site'] =  $this->multiple($sites);
+            }
+            if ($request->has('forbidden_sites') and count($request->forbidden_sites) > 0) {
+                $sites = [];
+                foreach ($request->forbidden_sites as $site)
+                    $sites[$site] = $site;
+                $targeting['excluded_site'] =  $this->multiple($sites);
+            }
 
 
             $opt = [
@@ -176,13 +192,7 @@ class AdvertController extends Controller
                 "frequency" => $request->frequency,
                 "accelerated" => $request->accelerated,
 
-                'targeting'=>[
-                    "frequency_capping" => $capping,
-                    'week_day_hours' => json_encode($request->week_day_hours),
-                    "frequency_period" =>  $frequency_period,
-                    "site" => json_encode($sites),
-                    "excluded_site" => json_encode($excluded),
-                ],
+                'targeting'=>$targeting,
             ];
 
             if ($request->has('frequency'))
@@ -202,7 +212,7 @@ class AdvertController extends Controller
                             $ext = array_reverse(explode('.', $file))[0];
                             $time = time();
                             $new_file =  public_path('uploads/adverts/'.$time.'-'.str_replace(' ', '-', $request->name).'.'.$ext);
-                            $filename = env('APP_URL')."/public/uploads/adverts/$time".'-'.strtolower(str_replace(' ', '-', $request->name)).'.'.$ext;
+                            $filename = env('APP_URL')."/public/uploads/adverts/$time".'-'.str_replace(' ', '-', $request->name).'.'.$ext;
                             $filesize = filesize($file);
                             File::move($file, $new_file);
                             $opt['file_data'] = json_encode(
@@ -265,24 +275,43 @@ class AdvertController extends Controller
                     'target_url.required' => __('notification.target_url_is_required'),
                 ]
             );
-            $sites = [];
-            $excluded = [];
-            if (isset($request->sites))
-                $sites = $request->sites;
-            if (isset($request->forbidden_sites))
-                $excluded = $request->forbidden_sites;
 
             $frequency_period = 'day';
             if ($request->frequency_period != '')
                 $frequency_period = $request->frequency_period;
-
             $capping = 0;
             if ($request->frequency_capping != '')
                 $capping = $request->frequency_capping;
+
+
+
+
+            $targeting['frequency_capping'] = $capping;
+            $targeting['frequency_period'] = $frequency_period;
+            if ($request->week_day_hours != null) {
+                $days = [];
+                foreach ($request->week_day_hours as $s)
+                    $days[$s] = $s;
+                $targeting['week_day_hours'] = $this->multiple($days);
+            }
+            if ($request->has('sites') and count($request->sites) > 0){
+                $sites = [];
+                foreach ($request->sites as $site)
+                    $sites[$site] =  $site;
+                $targeting['site'] =  $this->multiple($sites);
+            }
+            if ($request->has('forbidden_sites') and count($request->forbidden_sites) > 0) {
+                $sites = [];
+                foreach ($request->forbidden_sites as $site)
+                    $sites[$site] = $site;
+                $targeting['excluded_site'] =  $this->multiple($sites);
+            }
+
+
             $opt = [
                 "ad_id" => $id,
                 'set_id' => $item['set_id'],
-                'user_id' => auth()->id(),
+                'user_id' => $item['user_id'],
                 'campaign_id' => $item['campaign_id'],
                 'name' => $request->name,
                 "ad_url" => $request->target_url,
@@ -303,19 +332,13 @@ class AdvertController extends Controller
                 "ref_share_rate" => $request->ref_share_rate,
                 "frequency" => $request->frequency,
                 "accelerated" => $request->accelerated,
-                'targeting'=>[
-                    "site" => json_encode($sites),
-                    "excluded_site" => json_encode($excluded),
-                    "frequency_capping" => $capping,
-                    'week_day_hours' => json_encode($request->week_day_hours),
-                    "frequency_period" =>  $frequency_period,
-                ],
+                'targeting'=>$targeting
             ];
-
             if ($request->has('frequency'))
                 $opt['targeting']['frequency'] = 1;
 
             if ($request->ads_file == null){
+                dd('a');
 
                 $item_file = json_decode($item['file_data']);
                 if (gettype($item_file) != 'integer') {
@@ -359,7 +382,7 @@ class AdvertController extends Controller
                         $ext = array_reverse(explode('.', $file))[0];
                         $time = time();
                         $new_file =  public_path('uploads/adverts/'.$time.'-'.str_replace(' ', '-', $request->name).'.'.$ext);
-                        $filename = env('APP_URL')."/public/uploads/adverts/$time".'-'.strtolower(str_replace(' ', '-', $request->name)).'.'.$ext;
+                        $filename = env('APP_URL')."/public/uploads/adverts/$time".'-'.str_replace(' ', '-', $request->name).'.'.$ext;
                         $filesize = filesize($file);
                         File::move($file, $new_file);
                         $opt['file_data'] = json_encode(
@@ -377,17 +400,7 @@ class AdvertController extends Controller
                         );
                     }
                 }
-//                $opt['file_data'] = json_encode([
-//                    'html' => null,
-//                    'dir_url' => $filename,
-//                    'down_url' => $filename,
-//                    'id' => $id,
-//                    'ad_id' =>$id,
-//                    'size' => $filesize,
-//                    'format' => $mime,
-//                    'type' => $mime,
-//                    'dimension_id' => 30,
-//                ]);
+
             }
             $result = $this->api->update_ad($opt)->post();
             if (isset($result['status']) and $result['status'] == 'success')
@@ -462,7 +475,27 @@ class AdvertController extends Controller
         $messages = [];
         if (isset($result['messages']))
             $messages = $result['messages'];
+
         return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
 
+    }
+
+    public 	function multiple($data)
+    {
+        return json_encode($data);
+
+
+
+        $category = ( isset($data) ? $data : array() );
+        if( !count( $category ) ) {
+            $category = array ();
+        }
+        $category_list = array();
+        foreach ( $category as $value ) {
+            $category_list[] = intval($value);
+        }
+        $category_value = implode( ',', $category_list );
+
+        return $category_value;
     }
 }

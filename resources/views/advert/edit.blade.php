@@ -144,7 +144,7 @@
                                 <select class="select-ns" name="model_id">
                                     <option value="1" {{selected("1", $item['model_id'])}}>CPC</option>
                                     <option value="2" {{selected("2", $item['model_id'])}}>CPM</option>
-                                    <option value="3" {{selected("3", $item['model_id'])}}>CPV</option>
+                                    <option value="4" {{selected("3", $item['model_id'])}}>CPV</option>
                                 </select>
                             </div>
                         </div>
@@ -286,7 +286,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">{{__('adnetwork.targeting_site_note')}}
+                                <label class="form-label">{{__('adnetwork.website_list')}}
                                     <i class="popover">
 										<span>
 											{!! __('adnetwork.targeting_site_note') !!}
@@ -365,8 +365,8 @@
                             <label class="form-label" for="accelerated">{{__('adnetwork.accelerated')}}</label>
                             <div class="form-select">
                                 <select class="select-ns" name="accelerated" id="accelerated">
-                                    <option value="0" {{selected("0", $item['accelerated'])}}>{{__('adnetwork.yes')}}</option>
-                                    <option value="1" {{selected("1", $item['accelerated'])}}>{{__('adnetwork.no')}}</option>
+                                    <option value="0" {{selected("0", $item['accelerated'])}}>{{__('adnetwork.no')}}</option>
+                                    <option value="1" {{selected("1", $item['accelerated'])}}>{{__('adnetwork.yes')}}</option>
                                 </select>
                             </div>
                         </div>
@@ -375,8 +375,8 @@
                             <label class="form-label" for="no_earning">{!! __('adnetwork.no_earning') !!}</label>
                             <div class="form-select">
                                 <select class="select-ns" name="no_earning" id="no_earning">
-                                    <option value="0" {{selected("0", $item['no_earning'])}}>{!! __('adnetwork.no_earning_true') !!}</option>
-                                    <option value="1" {{selected("1", $item['no_earning'])}}>{!! __('adnetwork.no_earning') !!}</option>
+                                    <option value="0" {{selected("0", $item['no_earning'])}}>{!! __('adnetwork.no_earning') !!}</option>
+                                    <option value="1" {{selected("1", $item['no_earning'])}}>{!! __('adnetwork.no_earning_true') !!}</option>
                                 </select>
                             </div>
                         </div>

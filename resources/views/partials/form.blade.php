@@ -13,7 +13,6 @@
         @error($data['id'])
         <div class="notification-error">{{ $message }}</div>
         @enderror
-
     </div>
     @elseif($data['type'] == 'input:date')
     <div class="form-group">
@@ -91,7 +90,7 @@
         <div class="form-group">
             <label class="form-label" for="{{$data['id']}}">{{$data['title']}} </label>
             <div class="form-select">
-                <select class="select-ns" style="width: 100%" name="{{$data['name']}}" data-placeholder="{{$data['placeholder']}}" id="{{$data['id']}}" @if(isset($data['disabled']) and $data['disabled'] == true ) disabled @endif>
+                <select class="select-ns" style="width: 100%" name="{{$data['name']}}" data-placeholder="{{$data['placeholder']}}" id="{{$data['id']}}" @if(isset($data['disabled']) and $data['disabled'] == 1 ) disabled @endif>
                     @foreach($data['options'] as $option)
                         <option value="{{$option['id']}}" @if($option['selected'] == 1) selected @endif>{{$option['text']}}</option>
                     @endforeach

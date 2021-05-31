@@ -81,6 +81,27 @@
                     cache: true
                 }
             });
+
+            $('#companies').select2({
+                placeholder: "{{__('adnetwork.companies')}}",
+                language: {
+                    searching: function() {
+                        return "{{__('adnetwork.searching')}}";
+                    }
+                },
+                ajax: {
+                    url: "/api/select/companies",
+                    data: function(params) {
+                        var query = {
+                            search: params.term,
+                            page: params.page || 1
+                        }
+                        return query;
+                    },
+                    delay: 600,
+                    cache: true
+                }
+            });
         });
     </script>
 @endsection

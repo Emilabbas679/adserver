@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', __('adnetwork.stats'))
 @section('content')
-    <div class="content-inner">
+    <div class="content-inner campaign">
         <div class="breadcrumb">
             <ul>
                 <li><a href="{{route('home', app()->getLocale())}}">Smartbee</a></li>
@@ -16,30 +16,31 @@
             <div class="a-block-body">
                 <form method="get">
                     <div class="form-group mb-0">
-                        <div class="cols col-table">
-                            <div class="tb-item col-item col-b">
+                        <div class="cols w-mob">
+                            <div class="col-item col-d">
                                 <div class="form-select">
                                     <select name="stats_type" id="country" class="select-ns" data-placeholder="{{__('adnetwork.all')}}">
                                         <option value="get_spent_ad" {{selected_exist($request, 'stats_type', 'get_spent_ad')}}>{{__('adnetwork.spentadvert')}}</option>
                                         <option value="get_spent_site" {{selected_exist($request, 'stats_type', 'get_spent_site')}}>{{__('adnetwork.get_spent_site')}}</option>
                                         <option value="get_revenue_url" {{selected_exist($request, 'stats_type', 'get_revenue_url')}}>{{__('adnetwork.get_revenue_url')}}</option>
                                         <option value="get_spent_daily" {{selected_exist($request, 'stats_type', 'get_spent_daily')}}>{{__('adnetwork.get_spent_daily')}}</option>
+                                        <option value="get_revenue_site" {{selected_exist($request, 'stats_type', 'get_revenue_site')}}>{{__('adnetwork.get_revenue_site')}}</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="tb-item col-item col-b">
+                            <div class="col-item col-d">
                                 <div class="form-input f-calendar">
                                     <input id="text" type="text" name="start_date" @if(isset($request) and $request->has('start_date')) value="{{$request->start_date}}" @else value="01.{{date('m.Y')}}" @endif data-toggle="datepicker">
                                     <i></i>
                                 </div>
                             </div>
-                            <div class="tb-item col-item col-b">
+                            <div class="col-item col-d">
                                 <div class="form-input f-calendar">
                                     <input id="text" type="text" name="end_date" data-toggle="datepicker2" @if(isset($request) and $request->has('end_date')) value="{{$request->end_date}}" @else value="{{date('d.m.Y')}}" @endif>
                                     <i></i>
                                 </div>
                             </div>
-                            <div class="tb-item col-item"><button type="submit" class="a-button b-orange">{{__('adnetwork.search')}}</button></div>
+                            <div class="col-item col-e"><button type="submit" class="a-button b-orange b-block">{{__('adnetwork.search')}}</button></div>
                         </div>
                     </div>
                 </form>

@@ -23,7 +23,7 @@ class AgencyController extends Controller
         if (isset($data['status']) and $data['status'] == 'success') {
             $count = $data['data']['count'];
             $items = $data['data']['rows'];
-            $pages = round($count/10);
+            $pages = ceil($count/10);
             $cur_page = $page;
             if (count($items) > 0 )
                 $pagination = PaginationLinks::paginationCreate($cur_page,$pages,2,

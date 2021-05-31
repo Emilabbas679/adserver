@@ -1,6 +1,14 @@
 <?php 
  return [
  
+"new_create_email_for_site_title" => "{site_title} sistemi üçün qeydiyyat dəvəti.",
+
+"new_create_email_for_site_info" => "Salam <b>{user_name}</b>. <br/>
+Sizə qeydiyyat təklifi göndərildi. <br/>
+Daxil olmaq üçün link: {login_url} <br/>
+Login: <b>{email}</b> <br> 
+Parol  <b>{new_password}</b>",
+
 "pay_checks" => "Odenisi yoxla az",
 
 "notification_base_email" => "<tr style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;'><td style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; mso-table-lspace: 0pt; mso-table-rspace: 0pt;'><h1 style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;'>{site_title}</h1><p style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; margin: 0 0 10px;'>{message}</p></td></tr><tr style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;'><td style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; padding: 0 20px 20px; mso-table-lspace: 0pt; mso-table-rspace: 0pt;'><table align='center' role='presentation' cellspacing='0' cellpadding='0' border='0' style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto;'><tr style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;'><td class='button-td button-td-primary' style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; transition: all 100ms ease-in; border-radius: 4px; background: #222222; mso-table-lspace: 0pt; mso-table-rspace: 0pt;'><a class='button-a button-a-primary' href='{link}' style='-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; transition: all 100ms ease-in; background: #222222; border: 1px solid #000000; font-family: sans-serif; font-size: 15px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;'>{link_title}</a></td></tr></table></td></tr>",

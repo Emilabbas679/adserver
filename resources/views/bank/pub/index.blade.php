@@ -4,7 +4,7 @@
     <div class="content-inner">
         <div class="breadcrumb">
             <ul>
-                <li><a href="{{route('home', app()->getLocale())}}">Smartbee</a></li>
+                <li><a href="{{route('dashboard', app()->getLocale())}}">Smartbee</a></li>
                 <li><span>{{__('adnetwork.pub_all_wallet')}}</span></li>
             </ul>
         </div>
@@ -19,13 +19,24 @@
                 <form method="get">
                     <div class="form-group">
                         <div class="cols">
+
+
                             <div class="col-item col-a">
                                 <div class="form-select">
                                     <select name="user_id" id="users" style="width: 100%"  data-live-search="true">
                                         @if(count($user_api)>0)
                                             <option value="{{$user_api['user_id']}}" selected>{{$user_api['email']}}</option>
                                         @endif
-                                    </select>                                </div>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-item col-b">
+                                <div class="form-select">
+                                    <select name="site_id" id="site_id" style="width: 100%"  data-live-search="true">
+                                        <option value="0" {{selected_exist($request,'site_id', 0)}}>{{__('adnetwork.all')}}</option>
+                                        <option value="1366" {{selected_exist($request,'site_id', 1366)}}>Azerforum</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="tb-item col-item"><button type="submit" class="a-button b-orange">{{__('adnetwork.search')}}</button></div>
@@ -140,5 +151,9 @@
                 cache: true
             }
         });
+        $("#site_id").select2({
+            placeholder: "{{__('adnetwork.all')}}",
+
+        })
     </script>
 @endsection

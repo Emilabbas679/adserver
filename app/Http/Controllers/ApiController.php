@@ -128,4 +128,37 @@ class ApiController extends Controller
         }
         return false;
     }
+
+
+    public function selectFinanceCost(Request $request)
+    {
+        $page = $request->page;
+        $opt = ['page' => $page, 'limit'=>10, "start_date" => '01.01.2020', "end_date" => date('d.m.Y')];
+        if($request->has('search'))
+            $opt['searchQuery'] = $request->search;
+
+
+        $data = $this->api->get_cost($opt)->post();
+        if (isset($data['status']) and $data['status'] == 'success'){
+            $count = $data['data']['info']['count'];
+            $rows = $data['data']['rows'];
+            $more = false;
+            if ($count > $page*10)
+                $more = true;
+            $texts = array_column($rows,'cost_category_name');
+            $amounts = array_column($rows,'amount');
+            $descriptions = array_column($rows,'description');
+            $ids = array_column($rows,'id');
+
+            $items = [];
+
+            for ($i=0;$i<10;$i++){
+                if (isset($ids[$i]))
+                    $items[] = ['id'=>$ids[$i], 'text'=>$amounts[$i].' - '.$texts[$i].' - '.$descriptions[$i]];
+            }
+            $data = ['results' => $items, 'pagination' => ['more' => $more]];
+            return $data;
+        }
+        return false;
+    }
 }

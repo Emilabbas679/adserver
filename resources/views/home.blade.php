@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', env('APP_NAME'))
 @section('content')
-    <div class="content-inner">
+    <div class="content-inner homepage">
         <div class="breadcrumb">
             <ul>
                 <li><a href="{{route('home')}}">Smartbee</a></li>

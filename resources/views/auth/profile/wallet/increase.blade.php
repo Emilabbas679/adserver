@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('titles.wallet_increase'))
+@section('title', __('adnetwork.wallet_increase'))
 @section('title', '')
 @section('content')
     <div class="content-inner">
@@ -9,9 +9,7 @@
                 <li><span>İdarə paneli</span></li>
             </ul>
         </div>
-
         @include('partials.cards')
-
         <div class="a-block a-center">
             <div class="a-block-head">{{__('adnetwork.create')}}</div>
             <div class="a-block-body">
@@ -27,7 +25,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="phone">{{__('adnetwork.phone_number')}}</label>
+                            <label class="form-label" for="phone">{{__('adnetwork.tel')}}</label>
                             <div class="form-input">
                                 <input id="phone" name="phone" type="text" value="{{ $item->phone}}">
                             </div>
@@ -115,7 +113,7 @@
                         </div>
 
                         <div class="t-center mt-20">
-                            <button class="a-button b-green" type="submit">{{__('admin.submit')}}</button>
+                            <button class="a-button b-green" type="submit">{{__('adnetwork.submit')}}</button>
                         </div>
                     </form>
                 </div>

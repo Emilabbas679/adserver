@@ -16,7 +16,7 @@ http://creativecommons.org/publicdomain/zero/1.0/legalcode
 namespace App\Http\Helpers;
 
 // A class containing functions for creating pagination links.
-class PaginationLinks{
+class PaginationLinks {
 
   /* Returns a set of pagination links. The parameters are:
    *
@@ -37,11 +37,19 @@ class PaginationLinks{
    * $ellipsis      - the text to be used where pages are omitted - this
    *                  optional parameter defaults to an ellipsis ('...')
    */
+
   public static function paginationCreate(
       $page,
       $numberOfPages,
       $context    = 1,
       $linkFormat = '<li class="page-item"><a class="page-link" href="?page=%d">%d</a></li>',
+
+      $prevDisableFormat = '<li class="page-item prev active" disabled><a class="page-link">&#8249;</a></li>',
+      $prevFormat = '<li class="page-item prev"><a class="page-link" href="?page=%d">&#8249;</a></li>',
+
+      $nextDisableFormat = '<li class="page-item next active" disabled><a class="page-link">&#8250;</a></li>',
+      $nextFormat = '<li class="page-item next"><a class="page-link" href="?page=%d">&#8250;</a></li>',
+
       $pageFormat = '<li class="page-item active"><a class="page-link" href="?page=%d">%d</a></li>',
       $ellipsis   = '<li class="page-item disabled" aria-disabled="true"><span class="page-link">...</span></li>'
 
@@ -54,6 +62,9 @@ class PaginationLinks{
 
     // initialise the list of links
     $links = array();
+
+
+//    return $ranges;
 
     // loop over the ranges
     foreach ($ranges as $range){
@@ -70,7 +81,16 @@ class PaginationLinks{
 
     }
 
-    // return the links
+    if (count($links) > 0) {
+        if ($page == 1)
+            array_unshift($links, $prevDisableFormat);
+        else
+            array_unshift($links,  sprintf($prevFormat,((int) $page)-1));
+        if ($page == $numberOfPages)
+            array_push($links, $nextDisableFormat);
+        else
+            array_push($links,  sprintf($nextFormat,((int) $page)+1));
+    }
     return implode(' ' , $links);
 
   }
@@ -110,12 +130,14 @@ class PaginationLinks{
 
     // loop over the pages, adding their links to the list of links
     for ($index = $range[0]; $index <= $range[1]; $index ++){
+
       $links[] =
           sprintf(
               ($index == $page ? $pageFormat : $linkFormat),
               $index,
               $index);
     }
+
 
     // return the array of links
     return $links;

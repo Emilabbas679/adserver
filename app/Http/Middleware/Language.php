@@ -21,9 +21,9 @@ class Language
         $lang = $request->route('lang');
         if (!$lang)
             $lang = $request->route()->uri();
-        $langs = ['az', 'en', 'ru'];
+        $langs = ['az', 'en', 'ru','tr'];
         if (in_array($lang, $langs)) {
-            if ($lang != app()->getLocale() && $lang != 'tr') {
+            if ($lang != app()->getLocale()) {
                 Session::put(['locale' => $lang]);
                 App::setLocale(Session::get('locale'));
             }

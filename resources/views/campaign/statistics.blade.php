@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('title', $campaign['name'])
 @section('content')
-    <div class="content-inner">
+    <div class="content-inner campaign">
         <div class="breadcrumb">
             <ul>
-                <li><a href="{{route('home', app()->getLocale())}}">Smartbee</a></li>
+                <li><a href="{{route('dashboard', app()->getLocale())}}">Smartbee</a></li>
                 <li><span>İdarə paneli</span></li>
             </ul>
         </div>
@@ -16,26 +16,26 @@
             <div class="a-block-body">
                 <form action="{{route('campaign.statistics', ['lang'=>app()->getLocale(), 'id' => $campaign['campaign_id']])}}" method="get">
                     <div class="form-group mb-0">
-						<div class="cols col-table">
-							<div class="tb-item col-item col-b">
+						<div class="cols w-mob">
+							<div class="col-item col-d">
 								<div class="form-select">
 									<select name="status_id" id="country" class="select-ns" data-placeholder="{{__('placeholders.all_statuses')}}">
 									</select>
 								</div>
 							</div>
-							<div class="tb-item col-item col-b">
+							<div class="col-item col-d">
 								<div class="form-input">
 									<input id="text" type="text" name="searchQuery" data-toggle="datepicker">
 									</select>
 								</div>
-							</div>
-							<div class="tb-item col-item col-b">
+							</div> 
+							<div class="col-item col-d">
 								<div class="form-input">
 									<input id="text" type="text" name="searchQuery">
 									</select>
 								</div>
 							</div>
-							<div class="tb-item col-item"><button type="submit" class="a-button b-orange">{{__('adnetwork.search')}}</button></div>
+							<div class="col-item col-e"><button type="submit" class="a-button b-orange">{{__('adnetwork.search')}}</button></div>
 						</div>
                     </div>
                 </form>
@@ -94,7 +94,7 @@
 @endsection
 @section('js')
 	<script type="text/javascript" src="/js/datepicker.min.js"></script>
-	
+
     <script type="text/javascript">
         $(document).ready(function(){
             var table = $('.table').DataTable({
@@ -136,7 +136,7 @@
             }
         });
     </script>
-	
+
 	<script>
 	$('[data-toggle="datepicker"]').datepicker({
 		autoHide: true,
@@ -144,6 +144,6 @@
 		format: 'dd/mm/yyyy'
 	});
 	</script>
-	
-	
+
+
 @endsection

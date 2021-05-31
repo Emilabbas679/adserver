@@ -70,6 +70,7 @@ class Kernel extends HttpKernel
         'language' => \App\Http\Middleware\Language::class,
         'bank.permission' => \App\Http\Middleware\BankPermission::class,
         'agency.permission' => \App\Http\Middleware\AgencyPermission::class,
+        'user.permission' => \App\Http\Middleware\UserPermission::class,
 
     ];
 }

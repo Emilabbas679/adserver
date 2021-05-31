@@ -26,7 +26,7 @@ class BankController extends Controller
             $opt['amount_type'] = $request->amount_type;
 
         if ($request->has('account_no') and $request->account_no != 'all') {
-            $opt['account_no'] = $request->account_no;
+            $opt['account_id'] = $request->account_no;
             $account_no = $request->account_no;
         }
 
@@ -48,8 +48,11 @@ class BankController extends Controller
         $data = $this->api->get_bank_transactions($opt)->post();
         if (isset($data['status']) and $data['status'] == 'success')
             $items = $data['data']['rows'];
-        else
+        else {
+            dd($data);
             abort(404);
+
+        }
         return view('bank.accounting.index', compact('items', 'request', 'start_date', 'end_date', 'accounts' , 'account_no'));
     }
 
@@ -77,7 +80,7 @@ class BankController extends Controller
 
     public function accountingCreate(Request $request, $lang, $type)
     {
-        if ($type != 'debit' and $type != 'credit')
+        if ($type != 'debit' and $type != 'credit' and $type != 'transfer')
             abort(404);
         if ($request->isMethod('POST')) {
             $request->validate([
@@ -91,18 +94,27 @@ class BankController extends Controller
                     'account_no.required' => __('notification.account_no_is_required'),
                 ]
             );
-            $opt = ['account_no' => $request->account_no, 'date' => $request->date, 'description' => $request->description];
-            if ($type == 'debit')
-                $opt['debit'] = $request->amount;
-            else
-                $opt['credit'] = $request->amount;
-            $result = $this->api->bank_transaction_add($opt)->post();
-            if (isset($result) and $result['status'] == 'success') {
-                return redirect()->back()->withInput()->with(['success' => __('adnetwork.successfully_created')]);
-            } else {
-                $messages = $result['messages'];
-                return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
+            $opt = ['account_id' => $request->account_no, 'date' => $request->date, 'description' => $request->description];
+
+            if ($type != 'transfer') {
+                if ($type == 'debit')
+                    $opt['debit'] = $request->amount;
+                else
+                    $opt['credit'] = $request->amount;
+                $this->api->bank_transaction_add($opt)->post();
             }
+            else{
+                $opt1 = $opt;
+                $opt2 = $opt;
+                $opt2['account_id'] = $request->new_account_no;
+                $opt1['credit'] = $request->amount;
+                $opt2['debit'] = $request->amount;
+                $this->api->bank_transaction_add($opt1)->post();
+                $this->api->bank_transaction_add($opt2)->post();
+            }
+            return redirect()->back()->withInput()->with(['success' => __('adnetwork.successfully_created')]);
+
+
         }
         $accounts_api = $this->api->get_bank_account_numbers(['status_id' => 11])->post();
         if (isset($accounts_api['status']) and $accounts_api['status'] == 'success'){
@@ -114,7 +126,7 @@ class BankController extends Controller
                     $selected = 1;
                 $options[] = [
                     'selected' => $selected,
-                    'id' => $item['account_no'],
+                    'id' => $item['id'],
                     'text' => $item['account_no'].' '.$item['account_owner']
                 ];
             }
@@ -122,16 +134,23 @@ class BankController extends Controller
 
             $page['form']['action'] = route('bank.accounting.create', ['lang' => app()->getLocale(), 'type' => $type]);
             if ($type == 'credit')
-                $page['title'] == __('adnetwork.credit');
-            else
+                $page['title'] = __('adnetwork.credit');
+            elseif($type == 'debit')
                 $page['title'] = __('adnetwork.debit');
+            else
+                $page['title'] = __('adnetwork.transfer');
+
             $page['form']['method'] = 'post';
             $page['breadcrumbs'][] = ['route' => route('home'), 'title' => 'Smartbee', 'breadcrumbs' => true];
             $page['breadcrumbs'][] = ['route' => route('bank.accounting.index', app()->getLocale()), 'title' => __('adnetwork.bank_account_transactions'), 'breadcrumbs' => true];
             $page['breadcrumbs'][] = ['title' => $page['title'], 'breadcrumbs' => false];
 
             $form = [];
-            $form[] = ['type' => 'select', 'required' => 1, 'id' => 'account_no', 'acount_no', 'title' => __('adnetwork.account_no'),'placeholder' => __('adnetwork.account_no'), 'value' => '380300001634854A75', 'options' => $options];
+            $form[] = ['type' => 'select', 'required' => 1, 'id' => 'account_no', 'title' => __('adnetwork.account_no'),'placeholder' => __('adnetwork.account_no'), 'value' => '380300001634854A75', 'options' => $options];
+
+            if ($type == 'transfer')
+                $form[] = ['type' => 'select', 'required' => 1, 'id' => 'new_account_no', 'title' => __('adnetwork.new_account_no'),'placeholder' => __('adnetwork.new_account_no'), 'value' => '380300001634854A75', 'options' => $options];
+
             $form[] = ['type' => 'input:date', 'required' => 1, 'id' => 'date', 'name' => 'date', 'title' => __('adnetwork.date'), 'value' => date('Y-m-d')];
             $form[] = ['type' => 'textarea', 'id' => 'description', 'name' => 'description', 'title' => __('adnetwork.description'), 'value' => '', 'placeholder' => __('adnetwork.description')];
             $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'amount', 'name' => 'amount', 'title' => __('adnetwork.amount'), 'value' => '', 'placeholder' => '0'];
@@ -141,6 +160,110 @@ class BankController extends Controller
         }
         abort(404);
 
+    }
+
+    public function accountingTransactionCreditEdit(Request $request, $lang, $id)
+    {
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'entity_id' => ['required', 'string'],
+                'entity_type' => ['required', 'string'],
+                'amount' => ['required', 'string'],
+            ],
+                [
+                    'entity_id.required' => __('adnetwork.entity_id_is_required'),
+                    'entity_type.required' => __('adnetwork.entity_type_is_required'),
+                    'amount.required' => __('adnetwork.amount_is_required'),
+                ]
+            );
+            $opt = ['entity_id' => $request->entity_id, 'type' => $request->entity_type, 'description' => $request->description, 'transaction_id' => $id, 'amount' => $request->amount, 'date'=> $request->date];
+            $data = $this->api->bank_action_add($opt)->post();
+            if (isset($data['status']) and $data['status'] == 'success')
+                return redirect()->route('bank.accounting.index', app()->getLocale())->with(['success'=>__('adnetwork.successfully_created')]);
+            else {
+                $messages = [];
+                if (isset($data['messages']))
+                    $messages = $data['messages'];
+                return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
+            }
+
+        }
+
+        $transaction = $this->api->get_bank_transactions(['id' => $id])->post();
+        if (isset($transaction['data']) and isset($transaction['data']['rows'][0]))
+            $transaction = $transaction['data']['rows'][0];
+        else
+            abort(404);
+
+        $type_options = bank_action_types();
+        $page['form']['action'] =route('bank.accounting.transaction.credit.edit', ['lang' => app()->getLocale(), 'id' => $id]);
+        $page['title'] = __('adnetwork.create_bank_transactions');
+        $page['form']['method'] = 'post';
+        $page['breadcrumbs'][] = ['route' => route('home'), 'title' => 'Smartbee', 'breadcrumbs' => true];
+        $page['breadcrumbs'][] = ['route' => route('bank.accounting.index', app()->getLocale()), 'title' => __('adnetwork.bank_account_transactions'), 'breadcrumbs' => true];
+        $page['breadcrumbs'][] = ['title' => $page['title'], 'breadcrumbs' => false];
+        $form = [];
+
+        $form[] = ['type'=>'select', 'id' => 'entity_type', 'name' => 'entity_type', 'title' => __('adnetwork.entity_type'), 'placeholder' => __('adnetwork.entity_type'), 'options' => $type_options];
+        $form[] = ['type' => 'select2', 'id'=>"entity_id", 'name'=>'entity_id', 'title'=> __('adnetwork.entity_id'), 'placeholder' => __('adnetwork.entity_id'), 'options' =>[] ];
+        $form[] = ['type' => 'input:date', 'required' => 1, 'id' => 'date', 'name' => 'date', 'title' => __('adnetwork.date'), 'value' => $transaction['date']];
+        $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'amount', 'name' => 'amount', 'title' => __('adnetwork.amount'), 'value' => $transaction['credit']];
+        $form[] = ['type' => 'textarea', 'required' => 1, 'id' => 'description', 'name' => 'description', 'title' => __('adnetwork.description'), 'placeholder' => __('adnetwork.description'), 'value'=> $transaction['description']];
+
+        return view('bank.actions.create' , compact('form', 'page'));
+    }
+
+    public function accountingTransactionDebitEdit(Request $request, $lang, $id)
+    {
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'entity_id' => ['required', 'string'],
+                'amount' => ['required', 'string'],
+            ],
+                [
+                    'entity_id.required' => __('adnetwork.entity_id_is_required'),
+                    'amount.required' => __('adnetwork.amount_is_required'),
+                ]
+            );
+            $opt = ['entity_id' => $request->entity_id, 'type' => 'service', 'description' => $request->description, 'transaction_id' => $id, 'amount' => $request->amount, 'date'=> $request->date];
+            $data = $this->api->bank_action_add($opt)->post();
+            if (isset($data['status']) and $data['status'] == 'success')
+                return redirect()->route('bank.accounting.index', app()->getLocale())->with(['success'=>__('adnetwork.successfully_created')]);
+
+            else {
+                $messages = [];
+                if (isset($data['messages']))
+                    $messages = $data['messages'];
+                return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
+            }
+
+        }
+        $transaction = $this->api->get_bank_transactions(['id' => $id])->post();
+        if (isset($transaction['data']) and isset($transaction['data']['rows'][0]))
+            $transaction = $transaction['data']['rows'][0];
+        else
+            abort(404);
+
+
+        $data = $this->api->get_account_category()->post();
+        $items = $data['data']['rows'];
+        $type_options = [];
+        foreach ($items as $item)
+            $type_options[] = ['id' => $item['id'], 'text' => $item['name'], 'selected' => 0];
+
+        $page['form']['action'] =route('bank.accounting.transaction.debit.edit', ['lang' => app()->getLocale(), 'id' => $id]);
+        $page['title'] = __('adnetwork.create_bank_transactions');
+        $page['form']['method'] = 'post';
+        $page['breadcrumbs'][] = ['route' => route('home'), 'title' => 'Smartbee', 'breadcrumbs' => true];
+        $page['breadcrumbs'][] = ['route' => route('bank.accounting.index', app()->getLocale()), 'title' => __('adnetwork.bank_account_transactions'), 'breadcrumbs' => true];
+        $page['breadcrumbs'][] = ['title' => $page['title'], 'breadcrumbs' => false];
+        $form = [];
+        $form[] = ['type' => 'select2', 'id'=>"entity_id", 'name'=>'entity_id', 'title'=> __('adnetwork.entity_id'), 'placeholder' => __('adnetwork.entity_id'), 'options' =>$type_options ];
+        $form[] = ['type' => 'input:date', 'required' => 1, 'id' => 'date', 'name' => 'date', 'title' => __('adnetwork.date'), 'value' => $transaction['date']];
+        $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'amount', 'name' => 'amount', 'title' => __('adnetwork.amount'), 'value' =>$transaction['debit']];
+        $form[] = ['type' => 'textarea', 'required' => 1, 'id' => 'description', 'name' => 'description', 'title' => __('adnetwork.description'), 'placeholder' => __('adnetwork.description'), 'value'=> $transaction['description']];
+
+        return view('bank.actions.debit_create' , compact('form', 'page'));
     }
 
     public function accountsIndex(Request $request)
@@ -318,7 +441,7 @@ class BankController extends Controller
         if (isset($data['status']) and $data['status'] == 'success') {
             $count = $data['data']['info']['count'];
             $items = $data['data']['rows'];
-            $pages = round($count/10);
+            $pages = ceil($count/10);
             if (count($items) > 0 )
                 $pagination = PaginationLinks::paginationCreate($page,$pages,2,
                     '<li class="page-item"><a class="page-link" href="?page=%d'.$query.$campaign_id.$charged.'">%d</a></li>',
@@ -337,6 +460,7 @@ class BankController extends Controller
         if ($request->has("page"))
             $page = $request->page;
         $opt = ["limit"=>10, "page"=>$page];
+
         $user_api = [];
         $user_get = '';
         if ($request->has('user_id') and $request->user_id != '0'){
@@ -347,6 +471,12 @@ class BankController extends Controller
                 return redirect()->route('campaign.index')->with('error', __('notification.user_not_found'));
             $user_api = $user_api['data'][0];
         }
+        $site_id = '';
+        if ($request->has('site_id') and $request->site_id != '0'){
+            $opt['site_id'] = $request->site_id;
+            $site_id = "&site_id=".$request->site_id;
+        }
+
         $data = $this->api->get_pub_all_wallet($opt)->post();
         $items = [];
         $cur_page = $page;
@@ -354,10 +484,10 @@ class BankController extends Controller
         if (isset($data['status']) and $data['status'] == 'success') {
             $items = $data['data']['rows'];
             $count = $data['data']['info']['count'];
-            $pages = round($count/10);
+            $pages = ceil($count/10);
             if (count($items) > 0 )
                 $pagination = PaginationLinks::paginationCreate($cur_page,$pages,2,
-                    '<li class="page-item"><a class="page-link" href="?page=%d'.$user_get.'">%d</a></li>',
+                    '<li class="page-item"><a class="page-link" href="?page=%d'.$user_get.$site_id.'">%d</a></li>',
                 );
         }
         return view('bank.pub.index', compact('request', 'items', 'user_api', 'pagination'));
@@ -410,7 +540,7 @@ class BankController extends Controller
         if (isset($data['status']) and $data['status'] == 'success') {
             $items = $data['data']['rows'];
             $count = $data['data']['info']['count'];
-            $pages = round($count/10);
+            $pages = ceil($count/10);
             if (count($items) > 0 )
                 $pagination = PaginationLinks::paginationCreate($page,$pages,2,
                     '<li class="page-item"><a class="page-link" href="?page=%d'.$start_date_txt.$end_date_txt.$search.$category_id.'">%d</a></li>',
@@ -486,6 +616,85 @@ class BankController extends Controller
         }
         else
             abort(404);
+    }
+
+
+    public function refWalletIndex(Request $request)
+    {
+        $page = 1;
+        if ($request->has("page"))
+            $page = $request->page;
+
+        $opt = ["limit"=>10, "page"=>$page];
+        $user_api = [];
+        $user_get = '';
+        if ($request->has('user_id') and $request->user_id != '0'){
+            $opt['user_id'] = $request->user_id;
+            $user_get = "&user_id=".$opt['user_id'];
+            $user_api = $this->api->get_user(['user_id'=>$opt['user_id']])->post();
+            if (!isset($user_api['status']) or (isset($user_api['status']) and $user_api['status'] == 'failed'))
+                return redirect()->route('campaign.index')->with('error', __('notification.user_not_found'));
+            $user_api = $user_api['data'][0];
+        }
+        $data = $this->api->get_ref_all_wallet($opt)->post();
+        $items = [];
+        $cur_page = $page;
+        $pagination = '';
+        if (isset($data['status']) and $data['status'] == 'success') {
+            $items = $data['data']['rows'];
+            $count = $data['data']['info']['count'];
+            $pages = ceil($count/10);
+            if (count($items) > 0 )
+                $pagination = PaginationLinks::paginationCreate($cur_page,$pages,2,
+                    '<li class="page-item"><a class="page-link" href="?page=%d'.$user_get.'">%d</a></li>',
+                );
+        }
+        return view('bank.ref.index', compact('request', 'items', 'user_api', 'pagination'));
+    }
+
+
+    public function bankActionsIndex(Request $request)
+    {
+        $page = 1;
+        if ($request->has("page"))
+            $page = $request->page;
+        $opt = ["limit"=>10, "page"=>$page];
+        $type = '';
+        if ($request->has('type') and $request->type != 'all'){
+            $opt['type'] = $request->type;
+            $type = "&type=".$opt['type'];
+        }
+        $transaction_id = '';
+        if ($request->has('transaction_id') and $request->transaction_id != ''){
+            $opt['transaction_id'] = $request->transaction_id;
+            $transaction_id = "&transaction_id=".$opt['transaction_id'];
+        }
+        $search = '';
+        if ($request->has('searchQuery') and $request->searchQuery != ''){
+            $opt['searchQuery'] = $request->searchQuery;
+            $search = "&searchQuery=".$opt['searchQuery'];
+        }
+        $data = $this->api->get_bank_actions($opt)->post();
+        $items = [];
+        $cur_page = $page;
+        $pagination = '';
+        if (isset($data['status']) and $data['status'] == 'success') {
+            $items = $data['data']['rows'];
+            $count = $data['data']['count'];
+            $pages = ceil($count/10);
+            if (count($items) > 0 )
+                $pagination = PaginationLinks::paginationCreate($cur_page,$pages,2,
+                    '<li class="page-item"><a class="page-link" href="?page=%d'.$type.$search.$transaction_id.'">%d</a></li>',
+                );
+        }
+        return view('bank.actions.index', compact('request', 'items', 'pagination'));
+    }
+
+    public function test()
+    {
+        $opt = ['site_id' => 1366];
+        $data = $this->api->get_pub_all_wallet($opt)->post();
+        dd($data);
     }
 
 }

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', __('adnetwork.adset_group'))
 @section('content')
-    <div class="content-inner">
+    <div class="content-inner adset">
         <div class="breadcrumb">
             <ul>
                 <li><a href="{{route('home', app()->getLocale())}}">{{__('adnetwork.home')}}</a></li>
@@ -15,26 +15,22 @@
             <div class="a-block-body">
                 <form action="{{route('adset.index', app()->getLocale())}}" method="get">
                     <div class="form-group mb-0">
-						<div class="cols col-table">
-							<div class="tb-item col-item col-b">
+						<div class="cols w-mob">
+							<div class="col-item col-d">
 								<div class="form-input">
 									<input id="text" type="text" name="searchQuery" @if($request->has('searchQuery')) value="{{$request->searchQuery}}" @endif placeholder="{{__('adnetwork.adset_group')}}">
 								</div>
 							</div>
-							<div class="tb-item col-item col-b">
+							<div class="col-item col-d">
 								<div class="form-select">
 									<select name="status_id" id="country" class="select-ns" data-placeholder="{{__('adnetwork.all')}}">
-                                        <option value="">{{__('adnetwork.all')}}</option>
-                                        <option value="11" {{selected_exist($request, 'status_id', 11)}}>{{__('adnetwork.ad_static_status_11')}}</option>
-                                        <option value="12" {{selected_exist($request, 'status_id', 12)}}>{{__('adnetwork.ad_static_status_12')}}</option>
-                                        <option value="17" {{selected_exist($request, 'status_id', 17)}}>{{__('adnetwork.ad_static_status_17')}}</option>
-                                        <option value="10" {{selected_exist($request, 'status_id', 10)}}>{{__('adnetwork.ad_static_status_10')}}</option>
-                                        <option value="27" {{selected_exist($request, 'status_id', 27)}}>{{__('adnetwork.ad_static_status_27')}}</option>
-                                        <option value="40" {{selected_exist($request, 'status_id', 40)}}>{{__('adnetwork.ad_static_status_40')}}</option>
+                                        @foreach(status_options() as $status)
+                                            <option value="{{$status['id']}}" {{selected_exist($request, 'status_id', $status['id'])}}>{{$status['text']}}</option>
+                                        @endforeach
 									</select>
 								</div>
 							</div>
-							<div class="tb-item col-item col-b">
+							<div class="col-item col-d">
 								<div class="form-select">
 									<select name="user_id" id="users" style="width: 100%"  data-live-search="true">
 										@if(count($user_api)>0)
@@ -44,7 +40,7 @@
 
 								</div>
 							</div>
-							<div class="tb-item col-item"><button type="submit" class="a-button b-orange">{{__('adnetwork.search')}}</button></div>
+							<div class="col-item col-e"><button type="submit" class="a-button b-orange b-block">{{__('adnetwork.search')}}</button></div>
 						</div>
                     </div>
                 </form>
@@ -52,11 +48,12 @@
         </div>
 
         <div class="a-block">
-            <div class="a-block-head">{{__('adnetwork.adset_group')}}
+            <div class="a-block-head with-b">{{__('adnetwork.adset_group')}}
                 <a href="{{route('adset.create', app()->getLocale())}}" class="a-button b-gr f-right with-icon add b-small">{{__('adnetwork.adset_add')}}</a>
 
             </div>
             <div class="a-block-body">
+
                 @if(count($items)>0)
                     <div class="table-responsive">
                         <table class="table">
@@ -73,9 +70,9 @@
                                 <th>{{__('adnetwork.budget_planned')}}</th>
                                 <th>{{__('adnetwork.budget_spent')}}</th>
                                 <th>{{__('adnetwork.status')}}</th>
-                                <th>{{__('adnetwork.start_date')}}</th>
-                                <th>{{__('adnetwork.end_date')}}</th>
-                                <th>{{__('adnetwork.date')}}</th>
+                                <th class="mw-100">{{__('adnetwork.start_date')}}</th>
+                                <th class="mw-100">{{__('adnetwork.end_date')}}</th>
+                                <th class="mw-100">{{__('adnetwork.date')}}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -142,6 +139,8 @@
                         {!! $pagination !!}
                     </ul>
                 </div>
+
+
             </div>
         </div>
     </div>
@@ -158,10 +157,6 @@
                     { "bSortable": false, "aTargets": 1 },
                 ]
             });
-
-            // table.columns( [5,6,7,8,9,10,11,12,13,14,15] ).visible( false );
-            // table.columns.orderable( [5,6,7,8,9,10,11,12,13,14,15] );
-
         });
     </script>
     <script>
@@ -172,7 +167,6 @@
                     return "{{__('adnetwork.searching')}}";
                 }
             },
-
             ajax: {
                 url: "/api/select/users",
                 data: function(params) {

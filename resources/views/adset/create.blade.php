@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', __('adnetwork.adset_add'))
 @section('content')
-    <div class="content-inner">
+    <div class="content-inner adset-a">
         <div class="breadcrumb">
             <ul>
                 <li><a href="{{route('home', app()->getLocale())}}">Smartbee</a></li>
@@ -118,7 +118,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group c-mb">
                         <div class="cols">
                             <div class="col-item col-a">
                                 <label class="form-label" for="os_id">{{__('adnetwork.os_id')}}</label>
@@ -145,7 +145,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group c-mb">
                         <div class="cols">
                             <div class="col-item col-a">
                                 <label class="form-label" for="connection_type_id">{{__('adnetwork.connection_type')}}</label>
@@ -169,7 +169,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group c-mb">
                         <div class="cols">
                             <div class="col-item col-a">
                                 <label class="form-label" for="age_group_id">{{__('adnetwork.age_group')}}</label>

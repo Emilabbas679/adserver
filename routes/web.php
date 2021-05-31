@@ -4,8 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TranslateController as Translate;
 use App\Http\Controllers\HomeController as Home;
 use App\Http\Controllers\UserController as User;
+use App\Http\Controllers\UsersController as Users;
 use App\Http\Controllers\ProfileController as Profile;
 use App\Http\Controllers\CampaignController as Campaign;
+use App\Http\Controllers\WebSiteController as Site;
+use App\Http\Controllers\ZoneController as Zone;
 use App\Http\Controllers\AdsetController as Adset;
 use App\Http\Controllers\AdvertController as Advert;
 use App\Http\Controllers\ApiController as Api;
@@ -34,13 +37,6 @@ Route::get('/', function (){
 })->name('home');
 
 
-Route::get('/test', function (){
-    dd(permission_include());
-    include base_path('resources/permissions/users.php');
-    dd($variable);
-    return 'test';
-})->name('test');
-
 
 
 Route::middleware('auth')->group(function (){
@@ -49,6 +45,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/campaigns', [Api::class, 'selectCampaigns'])->name('select.campaigns');
         Route::get('/sites', [Api::class, 'selectSites'])->name('select.sites');
         Route::get('/agencies', [Api::class, 'selectAgencies'])->name('select.agencies');
+        Route::get('/finance/cost', [Api::class, 'selectFinanceCost'])->name('select.finance_cost');
 
     });
 });
@@ -56,18 +53,52 @@ Route::middleware('auth')->group(function (){
 
 Route::prefix('/{lang}')->middleware('language')->group(function() {
     Route::middleware('auth')->group(function (){
-        Route::get('/', [Home::class, 'index'])->name('dashboard');
+        Route::get('/', function ($lang){
+           if (user_login_type('advertiser'))
+               return redirect("/$lang/advertiser");
+           else
+               return redirect("/$lang/publisher");
+        })->name('dashboard');
+
+        Route::get('/publisher', [Home::class, 'index']);
+        Route::get('/advertiser', [Home::class, 'index']);
+
+        Route::get('/change/{type}', [Home::class, 'userLoginType'])->name('user_login_type');
         Route::get('/translate', [Translate::class, 'index'])->name('admin.translations');
         Route::get('/translate/update/cron', [Translate::class, 'updateCron'])->name('translation_update_cron');
         Route::post('/translate', [Translate::class, 'update']);
         Route::post('/translate/create', [Translate::class, 'create_files'])->name('translate_create');
         Route::get('/campaign', [Campaign::class, 'index'])->name('campaign.index');
 
+        Route::get('/site', [Site::class, 'index'])->name('site.index');
+        Route::match(['get','post'],'/site/edit/{id}', [Site::class, 'edit'])->name('site.edit');
+        Route::post('/site/status', [Site::class, 'status'])->name('site.status');
+
+
+        Route::get('/zone', [Zone::class, 'index'])->name('zone.index');
+        Route::match(['get','post'],'/zone/edit/{id}', [Zone::class, 'edit'])->name('zone.edit');
+        Route::match(['get','post'],'/zone/create', [Zone::class, 'create'])->name('zone.create');
+        Route::get('/zone/status/{id}/{status_id}', [Zone::class, 'status'])->name('zone.status');
+
+
         Route::middleware('bank.permission')->group(function () {
+            Route::get('/users', [Users::class, 'index'])->name('users.index');
+            Route::get('/users/azerforum/revenue/daily/{id}', [Users::class, 'azerforumRevenueDaily'])->name('users.azerforum_revenue_daily');
+            Route::get('/users/stats/{id}', [Users::class, 'stats'])->name('users.stats');
+            Route::match(['get','post'], '/users/edit-payment/{id}', [Users::class, 'editPayment'])->name('users.edit_payment');
+        });
+
+        Route::middleware('bank.permission')->group(function () {
+
+
             Route::get('/bank/accounting', [Bank::class, 'accountingIndex'])->name('bank.accounting.index');
+            Route::match(['get','post'],'/bank/accounting/debit/transaction/edit/{id}', [Bank::class, 'accountingTransactionDebitEdit'])->name('bank.accounting.transaction.debit.edit');
+            Route::match(['get','post'],'/bank/accounting/credit/transaction/edit/{id}', [Bank::class, 'accountingTransactionCreditEdit'])->name('bank.accounting.transaction.credit.edit');
             Route::get('/bank/impression/stats/monthly', [Bank::class, 'impressionStatsMonthly'])->name('bank.impression.stats.monthly');
             Route::get('/bank/costs', [Bank::class, 'costIndex'])->name('bank.cost.index');
             Route::get('/bank/pub/wallet', [Bank::class, 'pubWalletIndex'])->name('bank.pub_wallet.index');
+            Route::get('/bank/ref/wallet', [Bank::class, 'refWalletIndex'])->name('bank.ref_wallet.index');
+            Route::get('/bank/actions', [Bank::class, 'bankActionsIndex'])->name('bank.actions.index');
             Route::get('/bank/pub/wallet/transactions/{user_id}', [Bank::class, 'pubWalletTransactions'])->name('bank.pub_wallet.transactions');
             Route::get('/bank/accounts', [Bank::class, 'accountsIndex'])->name('bank.accounts.index');
             Route::get('/bank/accounts/status/{id}/{status_id}', [Bank::class, 'accountsStatusUpdate'])->name('bank.accounts.status');
@@ -77,7 +108,9 @@ Route::prefix('/{lang}')->middleware('language')->group(function() {
             Route::match(['get','post'],'/bank/accounts/create', [Bank::class, 'accountNumberCreate'])->name('bank.account_number.create');
             Route::match(['get','post'],'/bank/costs/create', [Bank::class, 'costCreate'])->name('bank.cost.create');
             Route::match(['get','post'],'/bank/accounts/edit/{id}', [Bank::class, 'accountNumberEdit'])->name('bank.account_number.edit');
+            Route::match(['get','post'],'/bank/test', [Bank::class, 'test'])->name('bank.test');
         });
+
         Route::middleware('agency.permission')->group(function () {
             Route::get('/agency', [Agency::class, 'index'])->name('agency.index');
             Route::match(['get','post'],'/agency/edit/{id}', [Agency::class, 'edit'])->name('agency.edit');

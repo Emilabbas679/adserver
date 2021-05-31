@@ -1,6 +1,116 @@
 <?php 
  return [
  
+"error_pub_wallet_transaction" => "{id} saylı əməliyyat üçün daxil edilmiş məbləğ <b>{amount}</b> bölüşdürülməli olan rəqəmdən {check_amount} qədər azdır.",
+
+"costs" => "Costs",
+
+"impression_stats_monthly" => "Monthly impression stats",
+
+"ref_all_wallet" => "Ref all wallet",
+
+"pub_all_wallet" => "Pub all wallet",
+
+"bank_accounts" => "Bank accounts",
+
+"search_in_accounts" => "Hesab daxili axtarış",
+
+"create" => "Yeni",
+
+"add_new_file" => "Fayl əlavə et",
+
+"add_new_column" => "Sətir əlavə et",
+
+"other" => "Digər",
+
+"finance_campaigns" => "Kampaniya finansı",
+
+"bank_accounting_monthly" => "Aylıq bank köçürmələri",
+
+"bank_accounting" => "Bank köçürmələri",
+
+"account" => "Hesab",
+
+"account_no" => "Hesab",
+
+"search_in_transactions" => "Köçürmələrdə axtar",
+
+"create_credit" => "Məxaric",
+
+"create_debit" => "Mədaxil",
+
+"bank_account_transactions" => "Bank köçürmələri",
+
+"bank_transactions_credit" => "Bank Məxaic",
+
+"bank_transactions_debit" => "Bank mədaxil",
+
+"bonus_amount" => "Bonus xərclər",
+
+"ad_calculated_archive_month" => "Aylıq hesabat",
+
+"accounting_2" => "Mühasibatlıq V2",
+
+"new_create_email_for_site_info" => "Salam {user_name}. <br/> Sizə qeydiyyat təklifi göndərilir. Daxil olmaq üçün link: {login_url} <br> Sizin login: {email} <br> Sizin parol {new_password}.",
+
+"ad_static_adset_status_11" => "Qrup aktivdir",
+
+"ad_static_adset_status_40" => "Dayandırılıb",
+
+"ad_static_adset_status_27" => "Qrup silinmişdir",
+
+"ad_static_adset_status_17" => "Qrup istifadəçi tərəfindən söndürülmüşdür",
+
+"ad_static_adset_status_13" => "Təsdiqlənib. Reklam yoxdur",
+
+"ad_static_adset_status_10" => "Qrup  admin tərəfindən dayandırılmışdır",
+
+"ad_static_campaign_status_13" => "Təsdiqlənib. Reklam yoxdur",
+
+"ad_static_campaign_adset_status_13" => "Təsdiqlənib. Reklam yoxdur",
+
+"get_ads_hourly" => "Saatlıq hesabat",
+
+"company_5" => "Adsan",
+
+"company_4" => "OMM",
+
+"company_3" => "Adset",
+
+"company_2" => "Adsgarden",
+
+"company_1" => "Smartbee",
+
+"staff_birthday" => "Doğum tarixi",
+
+"staff_list" => "Staff list",
+
+"staff_list_i" => "Staff list",
+
+"control_panel" => "İdarə paneli",
+
+"ssp_id" => "SSP",
+
+"expendable" => "Xərclənən",
+
+"budget_spent_percent" => "Xərclənmə faiz",
+
+"publisher_reports_views" => "Repors",
+
+"publisher_reports_dashboard" => "Dashboard",
+
+"publisher_reports" => "Report",
+
+"week_day_hours_level_2" => "Həftənin günləri və saatlara görə hədəfləmək",
+
+"week_day_hours_level_1" => "Hər gün üçün yayınla",
+
+"week_day_hours" => "Həftənin günləri, saatlar",
+
+"week_day_hour" => "Həftənin günləri, saatlar",
+
+"weekhours" => "Həftəlik saatlar",
+
 "add_staff" => "İşçi əlavə et",
 
 "staff_add" => "İşçinin əlavə edilməsi",
@@ -1424,7 +1534,7 @@ Qeyd: <b>{description}</b>",
 
 "webmaster_pay_pending" => "Approved balance",
 
-"approveamount" => "Təsdiqlənib",
+"approveamount" => "Təsdiqlənib.",
 
 "pay_user_button" => "Ödəniş et",
 
@@ -1444,7 +1554,7 @@ Qeyd: <b>{description}</b>",
 
 "accelerated" => "Accelerate",
 
-"noearning" => "Qazandırır",
+"no_earning" => "Qazandırır",
 
 "freead" => "Ödənişli",
 
@@ -1472,7 +1582,7 @@ Qeyd: <b>{description}</b>",
 
 "hedef_kitle_b_y_kl" => "Размер целевой аудитории",
 
-"refresh" => "Обновление",
+"refresh" => "Yenilə",
 
 "external_google_update" => "Google Update",
 
@@ -2022,7 +2132,7 @@ Qeyd: <b>{description}</b>",
 
 "widgets_code_title" => "This is the code for your widget. Just copy and paste it into your website.",
 
-"all" => "All",
+"all" => "Hamısı",
 
 "contenttypeid" => "tipi",
 
@@ -2048,7 +2158,7 @@ Qeyd: <b>{description}</b>",
 
 "webmaster_sites_unitcostcpc" => "Klik",
 
-"search" => "AXTAR.",
+"search" => "Search",
 
 "status" => "Status",
 

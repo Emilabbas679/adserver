@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('title', __('adnetwork.campaign_list'))
 @section('content')
-    <div class="content-inner">
+    <div class="content-inner campaign">
         <div class="breadcrumb">
             <ul>
-                <li><a href="{{route('home', app()->getLocale())}}">{{__('adnetwork.home')}}</a></li>
+                <li><a href="{{route('dashboard', app()->getLocale())}}">{{__('adnetwork.home')}}</a></li>
                 <li><span>{{__('adnetwork.campaign_list')}}</span></li>
             </ul>
         </div>
@@ -16,13 +16,13 @@
             <div class="a-block-body">
                 <form action="{{route('campaign.index', app()->getLocale())}}" method="get">
                     <div class="form-group mb-0">
-						<div class="cols col-table">
-							<div class="tb-item col-item col-b">
+						<div class="cols w-mob">
+							<div class="col-item col-d">
 								<div class="form-input">
 									<input id="text" type="text" name="searchQuery" @if($request->has('searchQuery')) value="{{$request->searchQuery}}" @endif placeholder="{{__('adnetwork.campaign_name')}}">
 								</div>
 							</div>
-							<div class="tb-item col-item col-b">
+							<div class="col-item col-d">
 								<div class="form-select">
 									<select name="status_id" id="country" class="select-ns" data-placeholder="{{__('adnetwork.all')}}">
 										<option value="">{{__('adnetwork.all')}}</option>
@@ -35,7 +35,7 @@
 									</select>
 								</div>
 							</div>
-							<div class="tb-item col-item col-b">
+							<div class="col-item col-d">
 								<div class="form-select">
 									<select name="user_id" id="users" style="width: 100%"  data-live-search="true">
 										@if(count($user_api)>0)
@@ -44,8 +44,8 @@
 									</select>
 								</div>
 							</div>
-							<div class="tb-item col-item">
-								<button type="submit" class="a-button b-orange">{{__('adnetwork.search')}}</button>
+							<div class="col-item col-e">
+								<button type="submit" class="a-button b-orange b-block">{{__('adnetwork.search')}}</button>
 							</div>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
             </div>
         </div>
         <div class="a-block">
-            <div class="a-block-head">{{__('adnetwork.campaign_list')}}
+            <div class="a-block-head with-b">{{__('adnetwork.campaign_list')}}
 
                 <a href="{{route('campaign.create', app()->getLocale())}}" class="a-button b-gr f-right with-icon add b-small">{{__('adnetwork.campaign_add')}}</a>
             </div>
@@ -75,7 +75,7 @@
                                 <th>{{__('adnetwork.budget_planned')}}</th>
                                 <th>{{__('adnetwork.budget_spent')}}</th>
                                 <th>{{__('adnetwork.budget_remaining')}}</th>
-                                <th>{{__('adnetwork.date')}}</th>
+                                <th class="mw-100">{{__('adnetwork.date')}}</th>
                             </tr>
                             </thead>
                             <tbody>

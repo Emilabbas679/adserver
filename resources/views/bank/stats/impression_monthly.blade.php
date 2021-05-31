@@ -4,16 +4,13 @@
     <div class="content-inner">
         <div class="breadcrumb">
             <ul>
-                <li><a href="{{route('home', app()->getLocale())}}">Smartbee</a></li>
+                <li><a href="{{route('dashboard', app()->getLocale())}}">Smartbee</a></li>
                 <li><span>{{__('adnetwork.impression_stats_monthly')}}</span></li>
             </ul>
         </div>
         <!-- Cards start -->
-
     @include('flash-message')
     <!-- Cards end -->
-
-
         <div class="cols">
             <div class="a-block">
                 <div class="a-block-head">{{__('adnetwork.impression_stats_monthly')}}</div>

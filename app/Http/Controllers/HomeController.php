@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use ArielMejiaDev\LarapexCharts\LarapexChart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
@@ -43,5 +44,15 @@ class HomeController extends Controller
             ->setLabels(['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth']);
 
         return view('home', compact('chart', 'chart_pie'));
+    }
+
+    public function userLoginType(Request $request, $lang,$type)
+    {
+        if ($type == 'advertiser')
+            Session::put('user_login_type', 'advertiser');
+        elseif($type == 'publisher')
+            Session::put('user_login_type', 'publisher');
+//        return redirect()->back();
+        return redirect()->route('home', app()->getLocale());
     }
 }

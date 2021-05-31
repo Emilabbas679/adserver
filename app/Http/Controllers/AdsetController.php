@@ -45,12 +45,13 @@ class AdsetController extends Controller
         if (isset($data['status']) and $data['status'] == 'success') {
             $items = $data['data']['rows'];
             $count = $data['data']['count'];
-            $pages = round($count/10);
+            $pages = ceil($count/10);
             if (count($items) > 0 )
                 $pagination = PaginationLinks::paginationCreate($cur_page,$pages,2,
                     '<li class="page-item"><a class="page-link" href="?page=%d'.$status.$query.$user_get.'">%d</a></li>',
                 );
         }
+
         return view('adset.index', compact('pagination', 'page', 'cur_page', 'items', 'request', 'user_api'));
     }
 

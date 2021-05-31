@@ -1,6 +1,20 @@
 <?php 
  return [
  
+"friday" => "Sriday",
+
+"saturday" => "Saturday",
+
+"sunday" => "Sunday",
+
+"thursday" => "Thursday",
+
+"wednesday" => "Wednesday",
+
+"tuesday" => "Tuesday",
+
+"monday" => "Monday",
+
 "notice" => "WARNING",
 
 "upload_failed_server_cannot_handle_files_size_larger_then_file_size" => "Upload failed. Server cannot handle files ({size}) larger then: {file_size}",
