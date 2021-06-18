@@ -102,6 +102,31 @@
                     cache: true
                 }
             });
+
+            $('#fb_pages').select2({
+                placeholder: "{{__('adnetwork.user_email_or_name')}}",
+                language: {
+                    searching: function() {
+                        return "{{__('adnetwork.searching')}}";
+                    }
+                },
+
+                ajax: {
+                    url: "/api/select/fb/pages",
+                    data: function(params) {
+                        var query = {
+                            search: params.term,
+                            page: params.page || 1
+                        }
+                        return query;
+                    },
+                    delay: 600,
+                    cache: true
+                }
+            });
+
         });
+
+
     </script>
 @endsection

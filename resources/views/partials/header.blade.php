@@ -48,12 +48,22 @@
         <div class="notifications"><span>6</span></div>
         <div class="my-profile"><img src="/images/p/profile.jpg"></div>
         <div class="profile-block">
-            <div class="pr-top">{{auth()->user()->name}}</div>
+            <div class="pr-top">
+                @if(auth_id() == auth()->id())
+                {{auth()->user()->name}}
+                    @endif
+
+            </div>
             <div class="pr-menu">
                 <ul>
+                    @if(auth_id() == auth()->id())
                     <li class="p-profile"><a href="{{route('profile_settings', app()->getLocale())}}">{{__('adnetwork.my_profile')}}</a></li>
                     <li class="p-settings"><a href="{{route('profile_settings', app()->getLocale())}}">{{__('adnetwork.profile_settings')}}</a></li>
-                    <li class="p-logout"><a href="{{route('logout', app()->getLocale())}}">Çıxış</a></li>
+                    @endif
+                    @if(auth_id() != auth()->id())
+                    <li class="p-logout"><a href="{{route('view_mode_exit', app()->getLocale())}}">{{__('adnetwork.exit_view_mode')}}</a></li>
+                    @endif
+                    <li class="p-logout"><a href="{{route('logout', app()->getLocale())}}">{{__('adnetwork.logout')}}</a></li>
                 </ul>
             </div>
         </div>

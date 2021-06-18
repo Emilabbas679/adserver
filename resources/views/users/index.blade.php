@@ -67,6 +67,8 @@
                                 <th>{{__('adnetwork.phone_number')}}</th>
                                 <th>{{__('adnetwork.name')}}</th>
                                 <th>{{__('adnetwork.email')}}</th>
+                                <th>{{__('adnetwork.wallet_amount')}}</th>
+                                <th>{{__('adnetwork.invested_amount')}}</th>
                                 <th>{{__('adnetwork.language_id')}}</th>
                                 <th>{{__('adnetwork.group_id')}}</th>
                                 <th>{{__('adnetwork.gender')}}</th>
@@ -84,13 +86,15 @@
                                                 <li class="gain"><a class="dropdown-item" href="{{route('users.azerforum_revenue_daily', ['lang'=> app()->getLocale(), 'id' => $item['user_id']])}}">{{__('adnetwork.azerforum_revenue_daily')}}</a></li>
                                                 <li class="stats"><a class="dropdown-item" href="{{route('users.stats', ['lang'=> app()->getLocale(), 'id' => $item['user_id']])}}">{{__('adnetwork.stats')}}</a></li>
                                                 <li class="payment_info"><a class="dropdown-item" href="{{route('users.edit_payment', ['lang'=> app()->getLocale(), 'id' => $item['user_id']])}}">{{__('adnetwork.edit_payment_info')}}</a></li>
-
+                                                <li class="view_mode"><a class="dropdown-item" href="{{route('users.view_mode', ['lang'=> app()->getLocale(), 'id' => $item['user_id']])}}">{{__('adnetwork.view_as_user')}}</a></li>
                                             </ul>
                                         </div>
                                     </td>
                                     <td>{{$item['phone']}}</td>
                                     <td>{{$item['full_name']}}</td>
                                     <td>{{$item['email']}}</td>
+                                    <td>{{number_format($item['wallet_amount'],2)}}</td>
+                                    <td>{{number_format($item['invested_amount'],2)}}</td>
                                     <td>{{$item['language_id']}}</td>
                                     <td>{{$item['user_group_id']}}</td>
                                     <td>{{$item['gender']}}</td>

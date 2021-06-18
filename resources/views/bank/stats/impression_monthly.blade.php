@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title', __('adnetwork.impression_stats_monthly'))
+
 @section('content')
     <div class="content-inner">
         <div class="breadcrumb">
@@ -68,6 +69,29 @@
                                     </tr>
                                 @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <tr class="tfoot">
+                                        <td></td>
+                                        <td>{{array_sum(array_column($items, 'impression'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'unique_impression'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'click'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'unique_click'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'site_impression'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'site_click'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'reach'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'error'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'video_start'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'firstQuartile'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'midpoint'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'thirdQuartile'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'complete'))}}</td>
+                                        <td>{{array_sum(array_column($items, 'spent_amount'))}}</td>
+                                        <td>{{number_format(array_sum(array_column($items, 'wallet_spent_amount')),2)}}</td>
+                                        <td>{{number_format(array_sum(array_column($items, 'publisher_amount')),2)}}</td>
+                                        <td>{{number_format(array_sum(array_column($items, 'system_amount')),2)}}</td>
+                                        <td>{{number_format(array_sum(array_column($items, 'ref_user_amount')), 2)}}</td>
+                                    </tr>
+                                </tfoot>
 
                             </table>
                         </div>

@@ -48,14 +48,14 @@ class AgencyController extends Controller
                     'agency_name.required' => __('adnetwork.agency_name_is_required'),
                 ]
             );
-            $opt = ['agency_name' => $request->agency_name, 'agency_address' => $request->agency_address, 'voen' => $request->voen, 'user_id' => auth()->id()];
+            $opt = ['agency_name' => $request->agency_name, 'agency_address' => $request->agency_address, 'voen' => $request->voen, 'user_id' => auth_id()];
             $data = $this->api->agency_create($opt)->post();
             if (isset($data['status']) and $data['status'] == 'success')
                 return redirect()->route('agency.index', app()->getLocale())->with('success', __('adnetwork.successfully_created'));
             else{
                 $messages = [];
-                if (isset($result['messages']))
-                    $messages = $result['messages'];
+                if (isset($data['messages']))
+                    $messages = $data['messages'];
                 return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
             }
         }
@@ -95,7 +95,7 @@ class AgencyController extends Controller
                     'agency_name.required' => __('adnetwork.agency_name_is_required'),
                 ]
             );
-            $opt = ['agency_name' => $request->agency_name, 'agency_address' => $request->agency_address, 'voen' => $request->voen, 'user_id' => auth()->id(), 'agency_id' => $id];
+            $opt = ['agency_name' => $request->agency_name, 'agency_address' => $request->agency_address, 'voen' => $request->voen, 'user_id' => auth_id(), 'agency_id' => $id];
             $data = $this->api->agency_update($opt)->post();
             if (isset($data['status']) and $data['status'] == 'success')
                 return redirect()->route('agency.index', app()->getLocale())->with('success', __('adnetwork.successfully_created'));

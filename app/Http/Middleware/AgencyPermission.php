@@ -16,7 +16,7 @@ class AgencyPermission
      */
     public function handle(Request $request, Closure $next)
     {
-        $group_id = auth()->user()->user_group_id;
+        $group_id = auth_group_id();
         include(base_path("resources/permissions/groups/$group_id.php"));
         if (isset($permissions['adnetwork.can_manage_agency']) and $permissions['adnetwork.can_manage_accounting'] == 'true')
             return $next($request);

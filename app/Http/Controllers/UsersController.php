@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Helpers\PaginationLinks;
+use Illuminate\Support\Facades\Session;
 
 
 class UsersController extends Controller
@@ -34,18 +35,18 @@ class UsersController extends Controller
 
         $user_api = [];
         $user_get = '';
-        if ($request->has('user_id') and $request->user_id != ''){
+        if ($request->has('user_id') and $request->user_id != '0'){
             $opt['user_id'] = $request->user_id;
             $user_get = "&user_id=".$opt['user_id'];
             $user_api = $this->api->get_user(['user_id'=>$opt['user_id']])->post();
             if (!isset($user_api['status']) or (isset($user_api['status']) and $user_api['status'] == 'failed'))
-                return redirect()->route('users.index')->with('error', __('adnetwork.user_not_found'));
+                return redirect()->route('users.index', app()->getLocale())->with('error', __('adnetwork.user_not_found'));
             $user_api = $user_api['data'][0];
         }
 
-
         $data = $this->api->get_user_list($opt)->post();
         $items = [];
+        $pagination = '';
         if (isset($data['status']) and $data['status'] == 'success') {
             $count = $data['data']['count'];
             $items = $data['data']['rows'];
@@ -55,8 +56,8 @@ class UsersController extends Controller
                 $pagination = PaginationLinks::paginationCreate($cur_page,$pages,2,
                     '<li class="page-item"><a class="page-link" href="?page=%d'.$query.$user_get.$payment_info_status.'">%d</a></li>',
                 );
-
         }
+
         return view('users.index', compact('items' ,'request', 'pagination', 'user_api', 'request'));
 
     }
@@ -156,7 +157,16 @@ class UsersController extends Controller
             return redirect()->route('users.index', app()->getLocale())->with('success'. __('adnetwork.succesfully_updated'));
         }
         return view('users.payment_detail', compact('request', 'item'));
-
     }
 
+    public function viewUser(Request $request, $lang, $user_id){
+        $data = $this->api->get_user(['user_id' => $user_id])->post();
+        if (isset($data['status']) and $data['status'] == 'success') {
+            $user = $data['data'][0];
+            Session::put('auth_id', $user['user_id']);
+            Session::put('auth_group_id', $user['user_group_id']);
+            return redirect()->route('home');
+        }
+        abort(404);
+    }
 }

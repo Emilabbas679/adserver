@@ -125,7 +125,7 @@
                                 <select class="select-ns" name="model_id">
                                     <option value="1" {{selected(old('model_id'), 1)}}>CPC</option>
                                     <option value="2" {{selected(old('model_id'), 2)}}>CPM</option>
-                                    <option value="3"  {{selected(old('model_id'), 3)}}>CPV</option>
+                                    <option value="4"  {{selected(old('model_id'), 4)}}>CPV</option>
                                 </select>
                             </div>
                         </div>

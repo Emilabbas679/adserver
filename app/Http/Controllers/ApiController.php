@@ -39,6 +39,63 @@ class ApiController extends Controller
         }
         return false;
     }
+    public function selectFbUsers(Request $request)
+    {
+        $page = $request->page;
+        $opt = ['page' => $page, 'limit'=>10];
+        if($request->has('search'))
+            $opt['searchQuery'] = $request->search;
+        $data = $this->api->get_fb_users($opt)->post();
+        if (isset($data['status']) and $data['status'] == 'success'){
+            $count = $data['data']['count'];
+            $rows = $data['data']['rows'];
+            $more = false;
+            if ($count > $page*10)
+                $more = true;
+            $emails = array_column($rows,'name');
+            $ids = array_column($rows,'id');
+            $items = [];
+            if ($page == 1)
+                $items[] = ['id' => 0, 'text'=>__('adnetwork.no_user')];
+            for ($i=0;$i<10;$i++){
+                if (isset($ids[$i]))
+                    $items[] = ['id'=>$ids[$i], 'text'=>$emails[$i]];
+            }
+            $data = ['results' => $items, 'pagination' => ['more' => $more]];
+            return $data;
+        }
+        return false;
+    }
+
+
+    public function selectFbPages(Request $request)
+    {
+        $page = $request->page;
+        $opt = ['page' => $page, 'limit'=>10];
+        if($request->has('search'))
+            $opt['searchQuery'] = $request->search;
+        $data = $this->api->get_fb_pages($opt)->post();
+        if (isset($data['status']) and $data['status'] == 'success'){
+            $count = $data['data']['count'];
+            $rows = $data['data']['rows'];
+            $more = false;
+            if ($count > $page*10)
+                $more = true;
+            $emails = array_column($rows,'title');
+            $ids = array_column($rows,'id');
+            $items = [];
+            if ($page == 1)
+                $items[] = ['id' => 0, 'text'=>__('adnetwork.no_user')];
+            for ($i=0;$i<10;$i++){
+                if (isset($ids[$i]))
+                    $items[] = ['id'=>$ids[$i], 'text'=>$emails[$i]];
+            }
+            $data = ['results' => $items, 'pagination' => ['more' => $more]];
+            return $data;
+        }
+        return false;
+    }
+
 
     public function selectCampaigns(Request $request)
     {
@@ -58,7 +115,7 @@ class ApiController extends Controller
 
             $items = [];
             if ($page == 1)
-                $items[] = ['id' => 0, 'text'=>__('adnetwork.no_user')];
+                $items[] = ['id' => 0, 'text'=>__('adnetwork.all')];
             for ($i=0;$i<10;$i++){
                 if (isset($ids[$i]))
                     $items[] = ['id'=>$ids[$i], 'text'=>$names[$i]];
@@ -136,8 +193,6 @@ class ApiController extends Controller
         $opt = ['page' => $page, 'limit'=>10, "start_date" => '01.01.2020', "end_date" => date('d.m.Y')];
         if($request->has('search'))
             $opt['searchQuery'] = $request->search;
-
-
         $data = $this->api->get_cost($opt)->post();
         if (isset($data['status']) and $data['status'] == 'success'){
             $count = $data['data']['info']['count'];

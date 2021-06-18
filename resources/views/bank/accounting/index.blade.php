@@ -93,7 +93,7 @@
                                         <th>{{__('adnetwork.date')}}</th>
                                         <th>{{__('adnetwork.debit')}}</th>
                                         <th>{{__('adnetwork.credit')}}</th>
-                                        <th>{{__('adnetwork.qaliq')}}</th>
+                                        <th>{{__('adnetwork.revenue')}}</th>
                                         <th>{{__('adnetwork.balance')}}</th>
                                         <th>{{__('adnetwork.description')}}</th>
                                         <th>{{__('adnetwork.intime')}}</th>
@@ -109,16 +109,16 @@
                                                     <ul>
                                                         @if($item['credit'] == 0 and $item['debit'] != 0)
                                                         <li class="edit"><a class="dropdown-item" href="{{route('bank.accounting.transaction.debit.edit', ['lang'=>app()->getLocale(), 'id'=>$item['id']])}}" target="_blank">{{__('adnetwork.debit_transaction')}}</a></li>
-                                                            @endif
+                                                        @endif
 
-                                                            @if($item['debit'] == 0 and $item['credit'] != 0)
-                                                                <li class="edit"><a class="dropdown-item" href="{{route('bank.accounting.transaction.credit.edit', ['lang'=>app()->getLocale(), 'id'=>$item['id']])}}" target="_blank">{{__('adnetwork.credit_transaction')}}</a></li>
-                                                            @endif
+                                                        @if($item['debit'] == 0 and $item['credit'] != 0)
+                                                            <li class="edit"><a class="dropdown-item" href="{{route('bank.accounting.transaction.credit.edit', ['lang'=>app()->getLocale(), 'id'=>$item['id']])}}" target="_blank">{{__('adnetwork.credit_transaction')}}</a></li>
+
+                                                        @endif
 
                                                             <li class="logs"><a class="dropdown-item" href="{{route('bank.actions.index', ['lang'=>app()->getLocale(), 'transaction_id'=>$item['id']])}}" target="_blank">{{__('adnetwork.logs')}}</a></li>
 
 
-                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -136,14 +136,19 @@
                                                             <span style="color: red">{{$item['credit'] - $item['bt_amount']}}</span>
                                                         </a>
                                                     @endif
+
+                                                        <input type="hidden" class="bt_amounts" value="{{$item['credit']-$item['bt_amount']}}">
                                                 @else
                                                     @if($item['debit'] - $item['bt_amount'] == 0)
-                                                        <span style="color: red">{{$item['debit'] - $item['bt_amount']}}</span>
+                                                        <span >0</span>
                                                     @else
                                                         <a target="_blank" href="{{route('bank.accounting.transaction.debit.edit', ['lang'=>app()->getLocale(), 'id'=>$item['id']])}}">
                                                             <span style="color: red">{{$item['debit'] - $item['bt_amount']}}</span>
                                                         </a>
                                                     @endif
+                                                        <input type="hidden" class="bt_amounts" value="{{$item['debit']-$item['bt_amount']}}">
+
+
                                                 @endif
                                             </td>
                                             <td>{{$item['balance']}}</td>
@@ -161,7 +166,7 @@
                                         <td></td>
                                         <td>{{number_format(array_sum(array_column($items, 'debit')),2)}}</td>
                                         <td>{{number_format(array_sum(array_column($items, 'credit')),2)}}</td>
-                                        <td></td>
+                                        <td class="tfoot_revenues"></td>
                                         <td>{{number_format(array_sum(array_column($items, 'debit'))-array_sum(array_column($items, 'credit')),2)}}</td>
                                         <td></td>
                                         <td></td>
@@ -183,6 +188,14 @@
 @section('js')
     <script type="text/javascript">
         $(document).ready(function(){
+
+            let value = 0;
+            $( ".bt_amounts" ).each(function( index ) {
+                value = value + parseFloat($(this).val())
+            });
+            $(".tfoot_revenues").text(value)
+
+
             var table = $('.table').DataTable({
                 searching: false,
                 lengthChange: false,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class ProfileController extends Controller
 {
@@ -81,5 +82,13 @@ class ProfileController extends Controller
 
         return view('auth.profile.settings', compact('item','form'));
 
+    }
+
+
+    public function viewModeExit(Request $request)
+    {
+        Session::put("auth_id", auth()->id());
+        Session::put("auth_group_id", auth()->user()->user_group_id);
+        return redirect()->route('home');
     }
 }

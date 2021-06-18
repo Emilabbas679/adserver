@@ -101,7 +101,7 @@ class BankController extends Controller
                     $opt['debit'] = $request->amount;
                 else
                     $opt['credit'] = $request->amount;
-                $this->api->bank_transaction_add($opt)->post();
+                $result = $this->api->bank_transaction_add($opt)->post();
             }
             else{
                 $opt1 = $opt;
@@ -215,35 +215,81 @@ class BankController extends Controller
 
     public function accountingTransactionDebitEdit(Request $request, $lang, $id)
     {
-        if ($request->isMethod('post')) {
-            $request->validate([
-                'entity_id' => ['required', 'string'],
-                'amount' => ['required', 'string'],
-            ],
-                [
-                    'entity_id.required' => __('adnetwork.entity_id_is_required'),
-                    'amount.required' => __('adnetwork.amount_is_required'),
-                ]
-            );
-            $opt = ['entity_id' => $request->entity_id, 'type' => 'service', 'description' => $request->description, 'transaction_id' => $id, 'amount' => $request->amount, 'date'=> $request->date];
-            $data = $this->api->bank_action_add($opt)->post();
-            if (isset($data['status']) and $data['status'] == 'success')
-                return redirect()->route('bank.accounting.index', app()->getLocale())->with(['success'=>__('adnetwork.successfully_created')]);
-
-            else {
-                $messages = [];
-                if (isset($data['messages']))
-                    $messages = $data['messages'];
-                return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
-            }
-
-        }
         $transaction = $this->api->get_bank_transactions(['id' => $id])->post();
         if (isset($transaction['data']) and isset($transaction['data']['rows'][0]))
             $transaction = $transaction['data']['rows'][0];
         else
             abort(404);
 
+
+        if ($request->isMethod('post')) {
+
+            $request->validate([
+                'entity_type' => ['required', 'string'],
+                'entity_id' => ['required', 'string'],
+            ],
+                [
+                    'entity_id.required' => __('adnetwork.entity_id_is_required'),
+                    'entity_type.required' => __('adnetwork.entity_type_is_required'),
+                ]
+            );
+            if ($request->entity_type == 2 or $request->entity_type == 3) {
+                $opt['date'] = $transaction['date'];
+                $opt['transaction_id'] = $transaction['id'];
+                $opt['description'] = $request->description;
+                $opt['payment_type'] = 'DT';
+                if ($request->entity_type == 3) {
+                    $opt['type'] = 'ad_agency_finance';
+                    $opt['agency_id'] = $request->entity_id;
+                }
+                if ($request->entity_type == 2) {
+                    $opt['type'] = 'campaign_finance';
+                }
+                $campaigns = [];
+                foreach ($request->campaigns as $key=>$value){
+                    if ($value != 0 and $value != null)
+                        $campaigns[$key] = ['campaign_id' => $key, 'charged_amount' => $value];
+                }
+                foreach ($request->descriptions as $key=>$value)
+                    if (isset($campaigns[$key]))
+                        $campaigns[$key]['description'] = $value;
+                $opt['data'] = $campaigns;
+                $data = $this->api->bank_action_add($opt)->post();
+                if (isset($data['status']) and $data['status'] == 'success')
+                    return redirect()->route('bank.accounting.index', app()->getLocale())->with(['success'=>__('adnetwork.successfully_created')]);
+                else {
+                    $messages = [];
+                    if (isset($data['messages']))
+                        $messages = $data['messages'];
+                    if (isset($data['error_message']))
+                        $messages[] = $data['error_message'];
+
+                    return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
+                }
+            }
+            else{
+
+            }
+
+
+
+
+//            $opt = ['entity_id' => $request->entity_id, 'type' => 'service', 'description' => $request->description, 'transaction_id' => $id, 'amount' => $request->amount, 'date'=> $request->date];
+//            $data = $this->api->bank_action_add($opt)->post();
+//            if (isset($data['status']) and $data['status'] == 'success')
+//                return redirect()->route('bank.accounting.index', app()->getLocale())->with(['success'=>__('adnetwork.successfully_created')]);
+//
+//            else {
+//                $messages = [];
+//                if (isset($data['messages']))
+//                    $messages = $data['messages'];
+//                return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
+//            }
+
+
+        }
+
+        return view('bank.actions.debit', compact('transaction', 'request'));
 
         $data = $this->api->get_account_category()->post();
         $items = $data['data']['rows'];
@@ -264,6 +310,37 @@ class BankController extends Controller
         $form[] = ['type' => 'textarea', 'required' => 1, 'id' => 'description', 'name' => 'description', 'title' => __('adnetwork.description'), 'placeholder' => __('adnetwork.description'), 'value'=> $transaction['description']];
 
         return view('bank.actions.debit_create' , compact('form', 'page'));
+    }
+
+
+    public function getDebitorFinance(Request $request)
+    {
+        if ($request->type == 1){
+
+        }
+        elseif($request->type == 2)
+            $opt['campaign_id'] = $request->id;
+        elseif($request->type == 3)
+            $opt['agency_id'] = $request->id;
+
+
+        $t_id = $request->transaction_id;
+        $transaction = $this->api->get_bank_transactions(['id' => $t_id])->post();
+        $transaction = $transaction['data']['rows'][0];
+
+
+        if ($request->type == 3 or $request->type == 2) {
+            $opt['limit'] = 1000;
+            $data = $this->api->get_campaign_finance($opt)->post();
+            if (isset($data['status']) and $data['status'] == 'success')
+                $items = $data['data']['rows'];
+            else
+                $items = [];
+
+            return view('partials.debitor', compact('items', 'transaction'));
+
+        }
+
     }
 
     public function accountsIndex(Request $request)
@@ -568,7 +645,7 @@ class BankController extends Controller
                     'category_id.required' => __('notification.category_id_is_required'),
                 ]
             );
-            $opt = ['amount' => $request->amount, 'description' => $request->description, 'user_id' => auth()->id(),'cost_time' => $request->cost_time,'category_id' => $request->category_id];
+            $opt = ['amount' => $request->amount, 'description' => $request->description, 'user_id' => auth_id(),'cost_time' => $request->cost_time,'category_id' => $request->category_id];
             $data = $this->api->create_cost($opt)->post();
             if (isset($data['status']) and  $data['status'] == 'success')
                 return redirect()->route('bank.cost.index', app()->getLocale())->with('success', __('adnetwork.successfully_created'));

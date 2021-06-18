@@ -15,6 +15,9 @@ use App\Http\Controllers\ApiController as Api;
 use App\Http\Controllers\WalletController as Wallet;
 use App\Http\Controllers\BankController as Bank;
 use App\Http\Controllers\AgencyController as Agency;
+use App\Http\Controllers\DebitorController as Debitor;
+use App\Http\Controllers\FB\UserController as FbUser;
+use App\Http\Controllers\FB\PageController as FbPage;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,6 +45,8 @@ Route::get('/', function (){
 Route::middleware('auth')->group(function (){
     Route::prefix('/api/select')->group(function (){
         Route::get('/users', [Api::class, 'selectUsers'])->name('select.users');
+        Route::get('/fb/users', [Api::class, 'selectFbUsers'])->name('select.fb_users');
+        Route::get('/fb/pages', [Api::class, 'selectFbPages'])->name('select.fb_pages');
         Route::get('/campaigns', [Api::class, 'selectCampaigns'])->name('select.campaigns');
         Route::get('/sites', [Api::class, 'selectSites'])->name('select.sites');
         Route::get('/agencies', [Api::class, 'selectAgencies'])->name('select.agencies');
@@ -69,12 +74,9 @@ Route::prefix('/{lang}')->middleware('language')->group(function() {
         Route::post('/translate', [Translate::class, 'update']);
         Route::post('/translate/create', [Translate::class, 'create_files'])->name('translate_create');
         Route::get('/campaign', [Campaign::class, 'index'])->name('campaign.index');
-
         Route::get('/site', [Site::class, 'index'])->name('site.index');
         Route::match(['get','post'],'/site/edit/{id}', [Site::class, 'edit'])->name('site.edit');
         Route::post('/site/status', [Site::class, 'status'])->name('site.status');
-
-
         Route::get('/zone', [Zone::class, 'index'])->name('zone.index');
         Route::match(['get','post'],'/zone/edit/{id}', [Zone::class, 'edit'])->name('zone.edit');
         Route::match(['get','post'],'/zone/create', [Zone::class, 'create'])->name('zone.create');
@@ -83,16 +85,17 @@ Route::prefix('/{lang}')->middleware('language')->group(function() {
 
         Route::middleware('bank.permission')->group(function () {
             Route::get('/users', [Users::class, 'index'])->name('users.index');
+            Route::get('/users/view-mode/{id}', [Users::class, 'viewUser'])->name('users.view_mode');
             Route::get('/users/azerforum/revenue/daily/{id}', [Users::class, 'azerforumRevenueDaily'])->name('users.azerforum_revenue_daily');
             Route::get('/users/stats/{id}', [Users::class, 'stats'])->name('users.stats');
             Route::match(['get','post'], '/users/edit-payment/{id}', [Users::class, 'editPayment'])->name('users.edit_payment');
         });
 
         Route::middleware('bank.permission')->group(function () {
-
-
             Route::get('/bank/accounting', [Bank::class, 'accountingIndex'])->name('bank.accounting.index');
             Route::match(['get','post'],'/bank/accounting/debit/transaction/edit/{id}', [Bank::class, 'accountingTransactionDebitEdit'])->name('bank.accounting.transaction.debit.edit');
+            Route::post('/bank/debitors/get/finance', [Bank::class, 'getDebitorFinance'])->name('bank.get_debitor_finance');
+
             Route::match(['get','post'],'/bank/accounting/credit/transaction/edit/{id}', [Bank::class, 'accountingTransactionCreditEdit'])->name('bank.accounting.transaction.credit.edit');
             Route::get('/bank/impression/stats/monthly', [Bank::class, 'impressionStatsMonthly'])->name('bank.impression.stats.monthly');
             Route::get('/bank/costs', [Bank::class, 'costIndex'])->name('bank.cost.index');
@@ -109,6 +112,12 @@ Route::prefix('/{lang}')->middleware('language')->group(function() {
             Route::match(['get','post'],'/bank/costs/create', [Bank::class, 'costCreate'])->name('bank.cost.create');
             Route::match(['get','post'],'/bank/accounts/edit/{id}', [Bank::class, 'accountNumberEdit'])->name('bank.account_number.edit');
             Route::match(['get','post'],'/bank/test', [Bank::class, 'test'])->name('bank.test');
+
+            Route::match(['get', 'post'], '/debitor/finance/{campaign_id}/{agency_id}', [Debitor::class, 'financeCreate'])->name('debitor.financeCreate');
+            Route::get('/debitor/campaigns', [Debitor::class, 'campaigns'])->name('debitor.campaigns');
+
+
+            Route::post('/debitor/get/finance/agencies', [Debitor::class, 'getAgencyDebitors'])->name('debitor.get_agency_debitors');
         });
 
         Route::middleware('agency.permission')->group(function () {
@@ -135,11 +144,13 @@ Route::prefix('/{lang}')->middleware('language')->group(function() {
         Route::delete('/advert/files/delete', [Advert::class, 'fileDelete'])->name('advert.delete');
         Route::get('/advert', [Advert::class, 'index'])->name('advert.index');
         Route::get('/logout', [Profile::class, 'logout'])->name('logout');
+        Route::get('/exit/view-mode', [Profile::class, 'viewModeExit'])->name('view_mode_exit');
         Route::match(['get','post'],'/profile/settings', [Profile::class, 'settings'])->name('profile_settings');
         Route::match(['get','post'],'/wallet/increase', [Wallet::class, 'increase'])->name('wallet_increase');
         Route::match(['get','post'],'/wallet/history', [Wallet::class, 'history'])->name('wallet_history');
 
     });
+
     Route::get('/login', [User::class, 'login'])->name('login');
     Route::match(['get', 'post'], '/advertiser/login', [User::class, 'advertiserLogin'])->name('advertiser_login');
     Route::match(['get', 'post'], '/advertiser/register', [User::class, 'advertiserRegister'])->name('advertiser_register');
@@ -149,6 +160,20 @@ Route::prefix('/{lang}')->middleware('language')->group(function() {
     Route::match(['get', 'post'], '/publisher/password', [User::class, 'publisherPassword'])->name('publisher_password');
     Route::get('/publisher/user/forgot/password/{hash_code}', [User::class, 'publisherPasswordVerify'])->name('publisher_password_verify');
     Route::get('/advertiser/user/forgot/password/{hash_code}', [User::class, 'advertiserPasswordVerify'])->name('advertiser_password_verify');
+
+
+    Route::get('/fb/users', [FbUser::class, 'index'])->name('fb_user.index');
+    Route::match(['get', 'post'], '/fb/user/create', [FbUser::class, 'create'])->name('fb_user.create');
+
+
+
+    Route::get('/fb/pages', [FbPage::class, 'index'])->name('fb_page.index');
+    Route::match(['get', 'post'],'/fb/users/create', [FbPage::class, 'create'])->name('fb_page.create');
+    Route::match(['get', 'post'],'/fb/users/edit/{id}', [FbPage::class, 'edit'])->name('fb_page.edit');
+
+    Route::match(['get','post'],'/profile/settings', [Profile::class, 'settings'])->name('profile_settings');
+
+
 });
 
 

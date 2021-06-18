@@ -30,6 +30,9 @@ class AdvertController extends Controller
                 return redirect()->route('advert.index', app()->getLocale())->with('error', __('notification.user_not_found'));
             $user_api = $user_api['data'][0];
         }
+        if(auth_group_id() != 1)
+            $opt['user_id'] = auth_id();
+
 
         $query = '';
         if ($request->has('searchQuery') and $request->searchQuery != ''){
@@ -170,7 +173,7 @@ class AdvertController extends Controller
 
             $opt = [
                 'set_id' => $request->set_id,
-                'user_id' => auth()->id(),
+                'user_id' => auth_id(),
                 'campaign_id' => $request->campaign_id,
                 'name' => $request->name,
                 "ad_url" => $request->target_url,
@@ -238,12 +241,12 @@ class AdvertController extends Controller
             return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
         }
 
-        $campaigns = $this->api->get_campaign(['user_id' => auth()->id()])->post();
+        $campaigns = $this->api->get_campaign(['user_id' =>auth_id()])->post();
         if (isset($campaigns['status']) and $campaigns['status'] == 'success')
             $campaigns = $campaigns['data']['rows'];
         else
             return redirect()->route('adset.index', app()->getLocale())->with('error', __('adnetwork.you_havenot_any_active_campaign'));
-        $groups = $this->api->get_adset(['user_id' => auth()->id()])->post();
+        $groups = $this->api->get_adset(['user_id' =>auth_id()])->post();
         if (isset($groups['status']) and $groups['status'] == 'success')
             $groups = $groups['data']['rows'];
         else
@@ -263,8 +266,8 @@ class AdvertController extends Controller
         if ($advert['status'] != 'success')
             return redirect()->route('advert.index', app()->getLocale())->with('error', __('adnetwork.ads_not_found'));
         $item = $advert['data'];
-
-
+        if (auth_group_id() != 1 and $item['user_id'] != auth_id())
+            return redirect()->route('advert.index', app()->getLocale())->with(['error'=>__('adnetwork.not_found')]);
         if ($request->isMethod('post')){
             $request->validate([
                 'name' => ['required', 'string'],
@@ -409,9 +412,6 @@ class AdvertController extends Controller
 
             return redirect()->back()->withInput()->with(['error' => __('adnetwork.something_went_wrong'), 'messages' => $messages]);
         }
-
-
-
         $s_sites = [];
         $excludeds = [];
         if ($item['targeting']['site'] != null and count((array) json_decode(stripslashes($item['targeting']['site']))) != 0)
@@ -419,17 +419,11 @@ class AdvertController extends Controller
 
         if ($item['targeting']['excluded_site'] != null and count((array) json_decode(stripslashes($item['targeting']['excluded_site']))) != 0)
             $excludeds = $this->api->get_site(['site_ids' => (array) json_decode($item['targeting']['excluded_site'])])->post()['data']['rows'];
+        $campaigns = $this->api->get_campaign(['campaign_id' => $item['campaign_id']])->post();
+        $campaigns = $campaigns['data']['rows'];
+        $groups = $this->api->get_adset(['set_id' => $item['set_id']])->post();
+        $groups = $groups['data']['rows'];
 
-        $campaigns = $this->api->get_campaign(['user_id' => auth()->id()])->post();
-        if (isset($campaigns['status']) and $campaigns['status'] == 'success')
-            $campaigns = $campaigns['data']['rows'];
-        else
-            return redirect()->route('adset.index', app()->getLocale())->with('error', __('adnetwork.you_havenot_any_active_campaign'));
-        $groups = $this->api->get_adset(['user_id' => auth()->id()])->post();
-        if (isset($groups['status']) and $groups['status'] == 'success')
-            $groups = $groups['data']['rows'];
-        else
-            return redirect()->route('advert.index', app()->getLocale())->with('error', __('adnetwork.you_havenot_any_active_group'));
         $sites = Cache::remember('sites', now()->addMinutes(10), function () {
             $result = $this->api->get_site(['status_id' => 11, 'limit' => 1000])->post();
             return $result['data']['rows'];
@@ -452,7 +446,6 @@ class AdvertController extends Controller
     public function fileDelete(Request $request)
     {
         return true;
-//        return $request->getContent();
     }
 
     public function statusUpdate($lang, $ad_id, $status_id) {
@@ -483,19 +476,5 @@ class AdvertController extends Controller
     public 	function multiple($data)
     {
         return json_encode($data);
-
-
-
-        $category = ( isset($data) ? $data : array() );
-        if( !count( $category ) ) {
-            $category = array ();
-        }
-        $category_list = array();
-        foreach ( $category as $value ) {
-            $category_list[] = intval($value);
-        }
-        $category_value = implode( ',', $category_list );
-
-        return $category_value;
     }
 }

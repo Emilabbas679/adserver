@@ -18,6 +18,9 @@ class ZoneController extends Controller
         if ($request->has("page"))
             $page = $request->page;
         $opt = ["limit"=>10, "page"=>$page];
+        if (auth_group_id() != 1)
+            $opt['user_id'] = auth_id();
+
         $format = '';
         if ($request->has('format_type_id') and $request->format_type_id != '0'){
             $opt['format_type_id'] = $request->format_type_id;
@@ -53,7 +56,7 @@ class ZoneController extends Controller
 
     public function create(Request $request, $lang)
     {
-        $sites = $this->api->get_site(['user_id' => auth()->id(), 'status_id' => 11, 'limit' => 100])->post();
+        $sites = $this->api->get_site(['user_id' => auth_id(), 'status_id' => 11, 'limit' => 100])->post();
         if (isset($sites['status']) and isset($sites['data']) and $sites['data']['count'] > 0)
             $sites = $sites['data']['rows'];
         else
@@ -80,7 +83,7 @@ class ZoneController extends Controller
                 'earning_cpc' => $request->earning_cpc,
                 'ad_id' => $request->ad_id,
                 'adserving' => $request->adserving,
-                'user_id' => auth()->id()
+                'user_id' => auth_id()
             ];
             $data = $this->api->create_slot($opt)->post();
             if (isset($data['status']) and $data['status'] == 'success')
@@ -200,6 +203,8 @@ class ZoneController extends Controller
             $item = $item['data']['rows'][0];
         else
             return redirect()->route('zone.index', app()->getLocale())->with('error', __('adnetwork.slot_not_found'));
+        if (auth_group_id() != 1 and $item['user_id'] != auth_id())
+            return redirect()->route('zone.index', app()->getLocale())->with(['error'=>__('adnetwork.not_found')]);
 
 
 
@@ -224,7 +229,7 @@ class ZoneController extends Controller
                 'earning_cpc' => $request->earning_cpc,
                 'ad_id' => $request->ad_id,
                 'adserving' => $request->adserving,
-                'user_id' => auth()->id(),
+                'user_id' => auth_id(),
                 'slot_id' => $id,
             ];
 

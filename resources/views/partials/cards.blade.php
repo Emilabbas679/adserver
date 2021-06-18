@@ -1,5 +1,5 @@
 {{--5926--}}
-@php $stats = impression_stats(auth()->id()) @endphp
+@php $stats = impression_stats(auth_id()) @endphp
 
 
 <div class="cards">
@@ -37,10 +37,10 @@
         <div class="card-a">
             <div class="card-top">
                 <div class="crd money-b">{{__('adnetwork.budget_cost')}}</div>
-{{--                <span class="prc pos">+15%</span>--}}
             </div>
             <div class="card-count">@if(isset($stats['month']))  {{number_format($stats['month']['spent_amount'], 2 )}} @else 0 @endif <span class="azn"></span></div>
             <div class="card-extra">{{__('adnetwork.month_budget_cost')}}</div>
         </div>
     </div>
+
 </div>

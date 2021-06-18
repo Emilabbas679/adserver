@@ -34,7 +34,18 @@
 				</li>
 
 
-                @if(check_permission('adnetwork.can_manage_accounting', $permissions))
+                <li class="side-b has-sub fb">
+                    <a href="#"><i></i><span>{{__('adnetwork.facebook')}}</span></a>
+                    <ul class="sub-menu">
+                        <li><a href="{{route('fb_user.index', app()->getLocale())}}">{{__('adnetwork.users')}}</a></li>
+                        <li><a href="{{route('fb_page.index', app()->getLocale())}}">{{__('adnetwork.pages')}}</a></li>
+
+                    </ul>
+                </li>
+
+
+
+            @if(check_permission('adnetwork.can_manage_accounting', $permissions))
                 <li class="side-b has-sub v-3">
 					<a href="#"><i></i><span>{{__('adnetwork.accounting')}}</span></a>
 					<ul class="sub-menu">
@@ -47,6 +58,7 @@
 						<li><a href="{{route('bank.cost.index', app()->getLocale())}}">{{__('adnetwork.costs')}}</a></li>
 						<li><a href="{{route('bank.impression.stats.monthly', app()->getLocale())}}">{{__('adnetwork.impression_stats_monthly')}}</a></li>
 						<li><a href="{{route('bank.actions.index', app()->getLocale())}}">{{__('adnetwork.bank_actions')}}</a></li>
+						<li><a href="{{route('debitor.campaigns', app()->getLocale())}}">{{__('adnetwork.campaign_debitors')}}</a></li>
 					</ul>
 				</li>
                 @endif
@@ -59,7 +71,9 @@
                 @endif
 
 
+                @if(check_permission('language.can_manage_lang_packs', $permissions))
 				<li class="side-b avtranslate"><a href="{{route('admin.translations', app()->getLocale())}}"><i></i><span>{{__('adnetwork.lang')}}</span></a></li>
+                    @endif
             </ul>
 		</div>
 	</div>

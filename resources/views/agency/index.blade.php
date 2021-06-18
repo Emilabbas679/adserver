@@ -12,7 +12,7 @@
         @include('partials.cards')
         @include('flash-message')
         <div class="a-block mb-20">
-            <div class="a-block-head">{{__('agency_name.search_in_agencies')}}</div>
+            <div class="a-block-head">{{__('adnetwork.search_in_agencies')}}</div>
             <div class="a-block-body">
                 <form  method="get">
                     <div class="form-group mb-0">

@@ -31,7 +31,7 @@ class UserController extends Controller
         if(request()->isMethod('post')) {
             $request->validate([
                 'email' => ['required', 'string', 'min:5', 'max:100'],
-                'password' => ['required', 'string', 'min:8', 'max:100'],
+                'password' => ['required', 'string', 'min:5', 'max:100'],
             ],
                 [
                     'email.required' => __('adnetwork.email_is_required'),
@@ -81,6 +81,8 @@ class UserController extends Controller
             $user->update(['user_group_id' => $data['user_group_id']]);
             Auth::Login($user);
             Session::put('user_login_type', 'advertiser');
+            Session::put('auth_group_id', $data['user_group_id']);
+            Session::put('auth_id', $data['user_id']);
 
             return redirect('/');
         }
@@ -92,9 +94,10 @@ class UserController extends Controller
     public function publisherLogin(Request $request)
     {
         if(request()->isMethod('post')) {
+
             $request->validate([
                 'email' => ['required', 'string', 'min:5', 'max:100'],
-                'password' => ['required', 'string', 'min:8', 'max:100'],
+                'password' => ['required', 'string', 'min:5', 'max:100'],
             ],
                 [
                     'email.required' => __('adnetwork.email_is_required'),
@@ -105,6 +108,7 @@ class UserController extends Controller
                     'password.max' => __('adnetwork.password_must_be_max_100'),
                 ]
             );
+
             if ($this->recaptcha_verify($request->recaptcha_response) == false)
                 return redirect()->route('publisher_login', app()->getLocale())->with('error','adnetwork.capthca_error');
             $opt = [
@@ -133,14 +137,16 @@ class UserController extends Controller
                     'user_group_id' => $data['user_group_id'],
                     'gender' => $data['gender'],
                     'id' => $data['user_id'],
-                    'phone' => $data['phone']
+                    'phone' => $data['phone'],
+                    'password' => Hash::make($request->password)
                 ]);
                 $user = User::find($data['user_id']);
             }
 
             Auth::login($user, $opt['remember_me']);
             $user->update(['user_group_id' => $data['user_group_id']]);
-
+            Session::put('auth_group_id', $data['user_group_id']);
+            Session::put('auth_id', $data['user_id']);
             Session::put('user_login_type', 'publisher');
 
             return redirect()->route('home');
@@ -200,6 +206,8 @@ class UserController extends Controller
                 ]);
                 $user = User::find($data['user_id']);
                 Auth::login($user, true);
+                Session::put('auth_group_id', $data['user_group_id']);
+                Session::put('auth_id', $data['user_id']);
                 Session::put('user_login_type', 'publisher');
                 return redirect('/'.app()->getLocale());
             }
@@ -260,6 +268,9 @@ class UserController extends Controller
                 $user = User::find($data['user_id']);
                 Auth::login($user, true);
                 Session::put('user_login_type', 'advertiser');
+                Session::put('auth_group_id', $data['user_group_id']);
+                Session::put('auth_id', $data['user_id']);
+
                 return redirect('/'.app()->getLocale());
             }
             return redirect()->route('advertiser_register', app()->getLocale())->with('error', __('adnetwork.something_went_wrong'));
@@ -377,9 +388,7 @@ class UserController extends Controller
         $recaptcha = json_decode($recaptcha);
 
         if ($recaptcha->success==true && isset($recaptcha->score) && $recaptcha->score >= 0.5)
-        {
             return true;
-        }
 
         return false;
     }

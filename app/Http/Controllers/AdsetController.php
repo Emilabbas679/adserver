@@ -38,6 +38,10 @@ class AdsetController extends Controller
                 return redirect()->route('adset.index', app()->getLocale())->with('error', __('notification.user_not_found'));
             $user_api = $user_api['data'][0];
         }
+        if (auth_group_id() != 1)
+            $opt['user_id'] = auth_id();
+
+
         $data = $this->api->get_adset($opt)->post();
         $items = [];
         $cur_page = $page;
@@ -71,7 +75,9 @@ class AdsetController extends Controller
         $ad = $this->api->get_adset(['set_id' => $id])->post();
         if (isset($ad['status']) and $ad['status'] == 'success') {
             $item = $ad['data']['rows'][0];
-//            $campaign = $this->api->get_campaign(['campaign_id' => $ad['campaign_id']])->post()['data']['rows'][0];
+            if (auth_group_id() != 1 and $item['user_id'] != auth_id())
+                return redirect()->route('adset.index', app()->getLocale())->with(['error'=>__('adnetwork.not_found')]);
+
             if ($request->isMethod('POST')){
                 $opt = [];
                 $opt['set_id'] = $id;
@@ -80,25 +86,18 @@ class AdsetController extends Controller
                 $opt['name'] = $item['name'];
                 if ($request->has('os_id'))
                     $opt['os_id'] = $request->get('os_id');
-
                 if ($request->has('device_id'))
                     $opt['device_id'] = $request->get('device_id');
-
                 if ($request->has('connection_type_id'))
                     $opt['connection_type_id'] = $request->get('connection_type_id');
-
                 if ($request->has('operator_id'))
                     $opt['operator_id'] = $request->get('operator_id');
-
                 if ($request->has('age_group_id'))
                     $opt['age_group_id'] = $request->get('age_group_id');
-
                 if ($request->has('gender'))
                     $opt['gender'] = $request->get('gender');
-
                 if ($request->has('country_id'))
                     $opt['country_id'] = $request->get('country_id');
-
                 if ($request->has('tags')) {
                     $tags = (array) json_decode($request->tags);
                     $tags = array_column($tags, 'value');
@@ -150,7 +149,7 @@ class AdsetController extends Controller
             $opt = [];
             $opt['campaign_id'] = $request->campaign_id;
             $opt['name'] = $request->name;
-            $opt['user_id'] = auth()->id();
+            $opt['user_id'] = auth_id();
             if ($request->has('os_id'))
                 $opt['os_id'] = $request->get('os_id');
 
@@ -197,7 +196,7 @@ class AdsetController extends Controller
                 return redirect()->back()->withInput()->with('error', __('adnetwork.something_went_wrong'));
 
         }
-        $campaigns = $this->api->get_campaign(['user_id' => auth()->id()])->post();
+        $campaigns = $this->api->get_campaign(['user_id' => auth_id()])->post();
         if (isset($campaigns['status']) and $campaigns['status'] == 'success')
             $campaigns = $campaigns['data']['rows'];
         else

@@ -19,6 +19,9 @@ class CampaignController extends Controller
             $page = $request->page;
 
         $opt = ["limit"=>10, "page"=>$page, 'calculated'=> 1];
+        if (auth_group_id() != 1)
+            $opt['user_id'] = auth_id();
+
         $query = '';
         if ($request->has('searchQuery') and $request->searchQuery != ''){
             $opt['searchQuery'] = $request->searchQuery;
@@ -60,9 +63,10 @@ class CampaignController extends Controller
 
     public function edit(Request $request, $lang, $id)
     {
+
         if ($request->isMethod('post'))
         {
-            $opt = ['campaign_id'=>$id,'change_user_id'=>auth()->id(),'name' => $request->name,'user_id' => $request->user_id, 'agency_id' => $request->agency_id];
+            $opt = ['campaign_id'=>$id,'change_user_id'=>auth_id(),'name' => $request->name,'user_id' => $request->user_id, 'agency_id' => $request->agency_id];
             $upd = $this->api->update_campaign($opt)->post();
             if (isset($upd['status']) and $upd['status'] == 'success')
                 return redirect()->route('campaign.index', app()->getLocale())->with(['success'=>__('adnetwork.successfully_updated')]);
@@ -73,6 +77,8 @@ class CampaignController extends Controller
         if (isset($item['status']) and $item['status'] == 'success')
         {
             $item = $item['data']['rows'][0];
+            if (auth_group_id()!= 1 and $item['user_id'] != auth_id())
+                return redirect()->route('campaign.index', app()->getLocale())->with(['error'=>__('adnetwork.not_found')]);
             if ($item['user_id'] == 0 )
                 $user = ['user_id' => 0, 'email'=> __('notification.no_user')];
             else{
@@ -157,7 +163,11 @@ class CampaignController extends Controller
 
         $form = [];
         $form[] = ['type' => 'input:text', 'required' => 1, 'id'=>'name','name'=>'name', 'title' => __('adnetwork.campaign_name'), 'value'=>old('name')];
-        $form[] = ['type' => 'select2', 'id'=>'users', 'name'=>'user_id', 'title'=> __('adnetwork.userid'), 'placeholder' => __('adnetwork.userid'), 'options' =>[]];
+        if (auth_group_id() == 1)
+            $form[] = ['type' => 'select2', 'id'=>'users', 'name'=>'user_id', 'title'=> __('adnetwork.userid'), 'placeholder' => __('adnetwork.userid'), 'options' =>[]];
+        else
+            $form[] = ['type' => 'input:hidden', 'id'=>'user_id', 'name'=>'user_id', 'title'=> __('adnetwork.userid'), 'placeholder' => __('adnetwork.userid'), 'value' =>auth_id()];
+
         $form[] = ['type' => 'select2', 'id'=>'agencies', 'name'=>'agency_id', 'title'=> __('adnetwork.agency'), 'placeholder' => __('adnetwork.agency'), 'options' =>[['id'=>0, 'text' => __('adnetwork.no_agency'),'selected' => 1 ]]];
 
         return view('form', compact('form', 'page'));

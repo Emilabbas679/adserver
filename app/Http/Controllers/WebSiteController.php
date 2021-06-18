@@ -28,15 +28,16 @@ class WebSiteController extends Controller
             $opt['status_id'] = $request->status_id;
             $status = "&status_id=".$opt['status_id'];
         }
-
-        $user_api = [];
+        if (auth_group_id() != 1)
+            $opt['user_id'] = auth_id();
+                $user_api = [];
         $user_get = '';
         if ($request->has('user_id') and $request->user_id != '' and $request->user_id != '0'){
             $opt['user_id'] = $request->user_id;
             $user_get = "&user_id=".$opt['user_id'];
             $user_api = $this->api->get_user(['user_id'=>$opt['user_id']])->post();
             if (!isset($user_api['status']) or (isset($user_api['status']) and $user_api['status'] == 'failed'))
-                return redirect()->route('campaign.index', app()->getLocale())->with('error', __('notification.user_not_found'));
+                return redirect()->route('site.index', app()->getLocale())->with('error', __('notification.user_not_found'));
             $user_api = $user_api['data'][0];
         }
 
@@ -82,6 +83,9 @@ class WebSiteController extends Controller
         else
             return redirect()->route('site.index', app()->getLocale())->with('error', __('adnetwork.site_not_found'));
 
+        if (auth_group_id() != 1 and $item['user_id'] != auth_id())
+            return redirect()->route('site.index', app()->getLocale())->with(['error'=>__('adnetwork.not_found')]);
+
 
         if ($request->isMethod('post')){
             $request->validate([
@@ -109,13 +113,6 @@ class WebSiteController extends Controller
         $form = [];
         $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'name', 'name' => 'name', 'title' => __('adnetwork.website_name'), 'value' => $item['name'], 'placeholder' => ''];
         $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'domain', 'name' => 'domain', 'title' => __('adnetwork.domain'), 'value' => $item['domain'], 'placeholder' => ''];
-//        $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'spent_cpm', 'name' => 'spent_cpm', 'title' => __('adnetwork.spent_cpm'), 'value' => $item['spent_cpm'], 'placeholder' => ''];
-//        $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'spent_cpc', 'name' => 'spent_cpc', 'title' => __('adnetwork.spent_cpc'), 'value' => $item['spent_cpc'], 'placeholder' => ''];
-//        $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'earning_cpm', 'name' => 'earning_cpm', 'title' => __('adnetwork.earning_cpm'), 'value' => $item['earning_cpm'], 'placeholder' => ''];
-//        $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'earning_cpc', 'name' => 'earning_cpc', 'title' => __('adnetwork.earning_cpc'), 'value' => $item['earning_cpc'], 'placeholder' => ''];
-//        $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'impressions_max', 'name' => 'impressions_max', 'title' => __('adnetwork.impressions_max'), 'value' => $item['impressions_max'], 'placeholder' => '0'];
-//        $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'clicks_max', 'name' => 'clicks_max', 'title' => __('adnetwork.clicks_max'), 'value' => $item['clicks_max'], 'placeholder' => '0'];
-//        $form[] = ['type' => 'input:text', 'required' => 1, 'id' => 'clicks_max', 'name' => 'earnings_max', 'title' => __('adnetwork.earnings_max'), 'value' => $item['earnings_max'], 'placeholder' => '0'];
         return view('form', compact('item', 'request', 'page' ,'form'));
     }
 }

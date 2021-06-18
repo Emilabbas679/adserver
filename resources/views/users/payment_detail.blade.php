@@ -114,7 +114,8 @@
 @endsection
 
 @section('js')
-    <script src="https://rawgithub.com/RobinHerbots/jquery.inputmask/2.x/dist/jquery.inputmask.bundle.js"></script>
+{{--    <script src="https://rawgithub.com/RobinHerbots/jquery.inputmask/2.x/dist/jquery.inputmask.bundle.js"></script>--}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.5/jquery.inputmask.min.js" integrity="sha512-sR3EKGp4SG8zs7B0MEUxDeq8rw9wsuGVYNfbbO/GLCJ59LBE4baEfQBVsP2Y/h2n8M19YV1mujFANO1yA3ko7Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
     <script>
@@ -134,12 +135,10 @@
             action_change($("#payment_provider").val());
         });
 
-        $('#bank_card_end_date').inputmask("99/99", {
-            //"placeholder": "+999(99)-999-99-99",
-            //onincomplete: function() {
-            //$(this).val('');
-            //}
-        });
+
+
+
+        $("#bank_card_end_date").inputmask({"mask": "99/99"});
 
 
     </script>

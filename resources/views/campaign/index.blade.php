@@ -87,7 +87,7 @@
                                         <div class="tools-list">
                                             <ul>
                                                 <li class="edit"><a class="dropdown-item" href="{{route('campaign.edit', ['lang'=>app()->getLocale(), 'id'=>$item['campaign_id']])}}" target="_blank">{{__('adnetwork.edit')}}</a></li>
-                                                @if($item['status_id'] != 10)
+                                                @if($item['status_id'] != 10 )
                                                     <li class="stop-a"><a class="dropdown-item" href="{{route('campaign.status', ['lang' => app()->getLocale(), 'campaign_id' => $item['campaign_id'], 'status_id' => 10])}}">{{__('adnetwork.admin_pause')}}</a></li>
                                                 @endif
                                                 @if($item['status_id'] != 40)

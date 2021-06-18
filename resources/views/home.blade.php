@@ -17,7 +17,9 @@
                 <div class="a-block">
                     <div class="a-block-head">Reklam elanları</div>
                     <div class="a-block-body">
-                        {!! $chart->container() !!}
+                        <div id="chart"></div>
+
+{{--                        {!! $chart->container() !!}--}}
                     </div>
                 </div>
             </div>
@@ -47,5 +49,60 @@
 
     {{ $chart->script() }}
     {{ $chart_pie->script() }}
+
+
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script>
+        google.charts.load('current', {
+            callback: function () {
+                var data = new google.visualization.DataTable({
+                    cols: [
+                        {label: 'x', type: 'string'},
+                        {label: 'Impression', type: 'number'},
+                        {label: 'Click', type: 'number'},
+                        {label: 'Spent', type: 'number'}
+                    ],
+                    rows: [
+                        @for($i = 1; $i<=(int) date('m'); $i++)
+
+                            {c:[{v: "{{__('adnetwork.month_'.$i)}}"}, {v: Math.random(1000000, 9999999)*1000000000}, {v: Math.random(0.0001, 0.9)*1000}, {v:  Math.random(10,1000)}]} @if($i != (int) date('m')), @endif
+
+
+                        @endfor
+
+                    ]
+                });
+
+                var container = document.getElementById('chart');
+                var chart = new google.visualization.LineChart(container);
+
+                chart.draw(data, {
+                    colors: ['#fd7241', '#0054e7', '#2bf500'],
+                    is3D: true,
+
+
+                //     width: '100%',
+                    height: 400,
+                    series: {
+                        1: {
+                            targetAxisIndex: 1,
+                        },
+
+                        2: {
+                            targetAxisIndex: 2,
+                        },
+
+                        3: {
+                            targetAxisIndex: 3,
+                        },
+                    },
+                //     theme: 'material',
+                     vAxis: {textPosition:'none'}
+                });
+            },
+            packages: ['corechart']
+        });
+    </script>
 
     @endsection

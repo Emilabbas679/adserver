@@ -64,8 +64,8 @@ if (!function_exists('impression_stats')){
 if (!function_exists('permission_include')){
     function permission_include()
     {
-        if (auth()->user()->user_group_id) {
-            $group_id = auth()->user()->user_group_id;
+        if (auth_group_id()) {
+            $group_id = auth_group_id();
             $file = base_path("resources/permissions/groups/$group_id.php");
             if (!is_file($file)) {
                 $api = new \App\Http\Controllers\API();
@@ -106,7 +106,7 @@ if (!function_exists('bank_action_types')){
         $type_options = [
             ['id' => 'pub_site', 'text' => __('adnetwork.sites'), 'selected' => 1],
 //            ['id' => 'user', 'text' => __('adnetwork.salary'), 'selected' => 0],
-            ['id' => 'user_agency', 'text' => __('adnetwork.agencies'), 'selected' => 0],
+            ['id' => 'ad_agency_finance', 'text' => __('adnetwork.agencies'), 'selected' => 0],
             ['id' => 'pub_wallet', 'text' => __('adnetwork.pub_wallet'), 'selected' => 0],
             ['id' => 'finance_cost', 'text' => __('adnetwork.finance_cost'), 'selected' => 0],
         ];
@@ -178,5 +178,29 @@ if (!function_exists('get_format_type')){
             return __('adnetwork.ad_static_name_261');
         else
             return $id;
+    }
+}
+
+
+if (!function_exists('auth_id')){
+    function auth_id(){
+        $auth = Session::get('auth_id');
+        if (!$auth) {
+            $user = auth()->user();
+            $auth = $user->id;
+            Session::put('auth_id', $auth);
+        }
+        return $auth;
+    }
+}
+if (!function_exists('auth_group_id')){
+    function auth_group_id(){
+        $auth = Session::get('auth_group_id');
+        if (!$auth) {
+            $user = auth()->user();
+            $auth = $user->user_group_id;
+            Session::put('auth_group_id', $auth);
+        }
+        return $auth;
     }
 }
